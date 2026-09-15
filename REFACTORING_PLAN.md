@@ -80,11 +80,11 @@ src/
 - [x] **Validação F1**: Teste de build com TypeScript para garantir zero erros.
 
 ### Fase 2: Camada de Dados e Serviços de API Assíncrona
-- [ ] **Etapa 2.1**: Extrair dados mockados para `src/data/` (`products.data.ts`, `drinks.data.ts`, `about.data.ts`).
-- [ ] **Etapa 2.2**: Criar cliente simulador de API `src/services/api.ts` (delay de rede com `Promise`).
-- [ ] **Etapa 2.3**: Criar `productService.ts` e `drinkService.ts`.
-- [ ] **Etapa 2.4**: Criar `aboutService.ts` e `authService.ts` (login, cadastro e sessão simulados).
-- [ ] **Validação F2**: Validação de chamadas assíncronas e tipagens de retorno.
+- [x] **Etapa 2.1**: Extrair dados mockados para `src/data/` (`products.data.ts`, `drinks.data.ts`, `about.data.ts`).
+- [x] **Etapa 2.2**: Criar cliente simulador de API `src/services/api.ts` (delay de rede com `Promise`).
+- [x] **Etapa 2.3**: Criar `productService.ts` e `drinkService.ts`.
+- [x] **Etapa 2.4**: Criar `aboutService.ts` e `authService.ts` (login, cadastro e sessão simulados).
+- [x] **Validação F2**: Validação de chamadas assíncronas e tipagens de retorno.
 
 ### Fase 3: Estado Global com Persistência e Custom Hooks
 - [ ] **Etapa 3.1**: Criar `CartContext.tsx` e `useCart` (com persistência em `localStorage` e animação de bounce).
