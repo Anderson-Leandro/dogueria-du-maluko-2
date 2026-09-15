@@ -87,10 +87,10 @@ src/
 - [x] **Validação F2**: Validação de chamadas assíncronas e tipagens de retorno.
 
 ### Fase 3: Estado Global com Persistência e Custom Hooks
-- [ ] **Etapa 3.1**: Criar `CartContext.tsx` e `useCart` (com persistência em `localStorage` e animação de bounce).
-- [ ] **Etapa 3.2**: Criar `AuthContext.tsx` e `useAuth` (com persistência em `localStorage`).
-- [ ] **Etapa 3.3**: Criar hooks de dados assíncronos (`useProducts`, `useDrinks`, `useAbout`).
-- [ ] **Validação F3**: Validar providers e hooks isoladamente.
+- [x] **Etapa 3.1**: Criar `CartContext.tsx` e `useCart` (com persistência em `localStorage` e animação de bounce).
+- [x] **Etapa 3.2**: Criar `AuthContext.tsx` e `useAuth` (com persistência em `localStorage`).
+- [x] **Etapa 3.3**: Criar hooks de dados assíncronos (`useProducts`, `useDrinks`, `useAbout`).
+- [x] **Validação F3**: Validar providers e hooks isoladamente.
 
 ### Fase 4: Componentes Reutilizáveis (UI, Layout e Produtos)
 - [ ] **Etapa 4.1**: Criar `Header.tsx`, `CartDropdown.tsx`, `Footer.tsx` e `PromoStrip.tsx` em `src/components/layout/` e `src/components/cart/`.
