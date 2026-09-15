@@ -93,11 +93,11 @@ src/
 - [x] **Validação F3**: Validar providers e hooks isoladamente.
 
 ### Fase 4: Componentes Reutilizáveis (UI, Layout e Produtos)
-- [ ] **Etapa 4.1**: Criar `Header.tsx`, `CartDropdown.tsx`, `Footer.tsx` e `PromoStrip.tsx` em `src/components/layout/` e `src/components/cart/`.
-- [ ] **Etapa 4.2**: Criar `ProductCard.tsx`, `DrinkCard.tsx` e `ProductModal.tsx` em `src/components/products/`.
-- [ ] **Etapa 4.3**: Criar `Field.tsx` e `AuthLayout.tsx` em `src/components/auth/`.
-- [ ] **Etapa 4.4**: Migrar componentes de `src/app/components/ui` para `src/components/ui`.
-- [ ] **Validação F4**: Testar compilação e isolamento visual dos componentes.
+- [x] **Etapa 4.1**: Criar `Header.tsx`, `CartDropdown.tsx`, `Footer.tsx` e `PromoStrip.tsx` em `src/components/layout/` e `src/components/cart/`.
+- [x] **Etapa 4.2**: Criar `ProductCard.tsx`, `DrinkCard.tsx` e `ProductModal.tsx` em `src/components/products/`.
+- [x] **Etapa 4.3**: Criar `Field.tsx` e `AuthLayout.tsx` em `src/components/auth/`.
+- [x] **Etapa 4.4**: Migrar componentes de `src/app/components/ui` para `src/components/ui`.
+- [x] **Validação F4**: Testar compilação e isolamento visual dos componentes.
 
 ### Fase 5: Páginas Completas (*Pages / Views*)
 - [ ] **Etapa 5.1**: Criar `src/pages/HomePage.tsx`.
