@@ -108,10 +108,10 @@ src/
 - [x] **Validação F5**: Validação de páginas conectadas aos hooks e contextos.
 
 ### Fase 6: Roteamento com React Router, Orquestração e Finalização
-- [ ] **Etapa 6.1**: Configurar React Router DOM em `src/App.tsx` com rotas (`/`, `/cardapio`, `/sobre`, `/login`, `/cadastro`).
-- [ ] **Etapa 6.2**: Atualizar `src/main.tsx` para importar `src/App.tsx`.
-- [ ] **Etapa 6.3**: Remover o antigo `src/app/App.tsx` e diretórios obsoletos.
-- [ ] **Validação Final**: Build de produção (`npm run build`), teste de todas as rotas, carrinho, login/cadastro e responsividade.
+- [x] **Etapa 6.1**: Configurar React Router DOM em `src/App.tsx` com rotas (`/`, `/cardapio`, `/sobre`, `/login`, `/cadastro`).
+- [x] **Etapa 6.2**: Atualizar `src/main.tsx` para importar `src/App.tsx`.
+- [x] **Etapa 6.3**: Remover o antigo `src/app/App.tsx` e diretórios obsoletos.
+- [x] **Validação Final**: Build de produção (`npm run build`), teste de todas as rotas, carrinho, login/cadastro e responsividade.
 
 ---
 *Este arquivo será atualizado passo a passo conforme as etapas forem concluídas.*
