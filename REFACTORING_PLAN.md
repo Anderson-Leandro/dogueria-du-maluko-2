@@ -75,9 +75,9 @@ src/
 ## 📋 Status e Rastreamento das Etapas
 
 ### Fase 1: Fundação — Tipos e Utilitários
-- [ ] **Etapa 1.1**: Criar `src/types/` e tipagens completas (`product.ts`, `drink.ts`, `cart.ts`, `user.ts`, `about.ts`).
-- [ ] **Etapa 1.2**: Criar `src/utils/` (`formatters.ts`, `masks.ts`, `validators.ts`).
-- [ ] **Validação F1**: Teste de build com TypeScript para garantir zero erros.
+- [x] **Etapa 1.1**: Criar `src/types/` e tipagens completas (`product.ts`, `drink.ts`, `cart.ts`, `user.ts`, `about.ts`).
+- [x] **Etapa 1.2**: Criar `src/utils/` (`formatters.ts`, `masks.ts`, `validators.ts`).
+- [x] **Validação F1**: Teste de build com TypeScript para garantir zero erros.
 
 ### Fase 2: Camada de Dados e Serviços de API Assíncrona
 - [ ] **Etapa 2.1**: Extrair dados mockados para `src/data/` (`products.data.ts`, `drinks.data.ts`, `about.data.ts`).
