@@ -100,12 +100,12 @@ src/
 - [x] **Validação F4**: Testar compilação e isolamento visual dos componentes.
 
 ### Fase 5: Páginas Completas (*Pages / Views*)
-- [ ] **Etapa 5.1**: Criar `src/pages/HomePage.tsx`.
-- [ ] **Etapa 5.2**: Criar `src/pages/MenuPage.tsx`.
-- [ ] **Etapa 5.3**: Criar `src/pages/AboutPage.tsx`.
-- [ ] **Etapa 5.4**: Criar `src/pages/LoginPage.tsx`.
-- [ ] **Etapa 5.5**: Criar `src/pages/RegisterPage.tsx`.
-- [ ] **Validação F5**: Validação de páginas conectadas aos hooks e contextos.
+- [x] **Etapa 5.1**: Criar `src/pages/HomePage.tsx`.
+- [x] **Etapa 5.2**: Criar `src/pages/MenuPage.tsx`.
+- [x] **Etapa 5.3**: Criar `src/pages/AboutPage.tsx`.
+- [x] **Etapa 5.4**: Criar `src/pages/LoginPage.tsx`.
+- [x] **Etapa 5.5**: Criar `src/pages/RegisterPage.tsx`.
+- [x] **Validação F5**: Validação de páginas conectadas aos hooks e contextos.
 
 ### Fase 6: Roteamento com React Router, Orquestração e Finalização
 - [ ] **Etapa 6.1**: Configurar React Router DOM em `src/App.tsx` com rotas (`/`, `/cardapio`, `/sobre`, `/login`, `/cadastro`).
