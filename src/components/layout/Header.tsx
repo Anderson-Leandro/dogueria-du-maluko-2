@@ -29,8 +29,8 @@ export function Header({ currentPath = "/", onNavigate }: HeaderProps) {
     { label: "INÍCIO", path: "/" },
     { label: "CARDÁPIO", path: "/cardapio" },
     { label: "SOBRE NÓS", path: "/sobre" },
-    { label: "DELIVERY", path: "/cardapio" },
-    { label: "CONTATO", path: "/sobre" },
+    // { label: "DELIVERY", path: "/cardapio" },
+    // { label: "CONTATO", path: "/sobre" },
   ];
 
   return (
@@ -59,9 +59,8 @@ export function Header({ currentPath = "/", onNavigate }: HeaderProps) {
                   key={link.label}
                   href={link.path}
                   onClick={(e) => handleNavClick(e, link.path)}
-                  className={`text-xs font-bold tracking-widest transition-colors duration-200 ${
-                    isActive ? "text-accent" : "text-white/70 hover:text-accent"
-                  }`}
+                  className={`text-xs font-bold tracking-widest transition-colors duration-200 ${isActive ? "text-accent" : "text-white/70 hover:text-accent"
+                    }`}
                 >
                   {link.label}
                 </a>
@@ -94,11 +93,10 @@ export function Header({ currentPath = "/", onNavigate }: HeaderProps) {
         {/* User button */}
         <button
           onClick={(e) => handleNavClick(e, isAuthenticated ? "/perfil" : "/login")}
-          className={`w-10 h-10 flex items-center justify-center rounded-full border transition-all duration-200 cursor-pointer ${
-            isAuthPath || isAuthenticated
+          className={`w-10 h-10 flex items-center justify-center rounded-full border transition-all duration-200 cursor-pointer ${isAuthPath || isAuthenticated
               ? "border-primary/60 text-primary bg-primary/10"
               : "border-white/20 text-white/70 hover:text-white hover:border-white/50 hover:bg-[rgba(255,255,255,0.1)]"
-          }`}
+            }`}
           title={isAuthenticated ? `Logado como ${user?.name || user?.email}` : "Entrar ou Cadastrar"}
           aria-label="Perfil do usuário"
         >
@@ -109,9 +107,8 @@ export function Header({ currentPath = "/", onNavigate }: HeaderProps) {
         <div className="relative">
           <button
             onClick={() => setCartOpen((v) => !v)}
-            className={`relative flex items-center gap-2 bg-primary hover:bg-orange-400 text-white px-4 py-2.5 rounded-full font-bold text-sm tracking-wide transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg cursor-pointer ${
-              cartBounce ? "scale-110" : ""
-            } ${cartOpen ? "ring-2 ring-white/30" : ""}`}
+            className={`relative flex items-center gap-2 bg-primary hover:bg-orange-400 text-white px-4 py-2.5 rounded-full font-bold text-sm tracking-wide transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg cursor-pointer ${cartBounce ? "scale-110" : ""
+              } ${cartOpen ? "ring-2 ring-white/30" : ""}`}
             aria-label="Abrir carrinho"
           >
             <ShoppingCart className="w-4 h-4 flex-shrink-0" />
