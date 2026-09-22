@@ -1,6 +1,17 @@
-# 🌭 Dogueria Du Maluko — Web & Delivery
+# 🌭 Dogueria Du Maluko — Web & Mobile (Delivery)
 
-> O hot dog mais divertido de Ribeirão Pires! Aplicação web moderna para pedidos online, cardápio interativo e institucional.
+> **O hot dog mais divertido de Ribeirão Pires!**  
+> Aplicação completa de delivery e cardápio interativo, projetada para funcionar como ecossistema multiplataforma (**Web & Mobile**).
+
+---
+
+## 🎓 Informações Acadêmicas
+
+- **Disciplina:** Programação para Dispositivos Móveis II
+- **Docente:** Prof. Dr. Bruno Zolotareff dos Santos
+- **Contexto:** Projeto prático de desenvolvimento com foco em arquitetura de software, prototipação ágil, desenvolvimento Web com **React** e evolução para aplicativo móvel com **React Native**.
+- **Equipe / Desenvolvedores:**
+  - Anderson Mendes Leandro e Ismael Alves de Almeida
 
 ---
 
