@@ -8,6 +8,7 @@ import { MenuPage } from "./pages/MenuPage";
 import { AboutPage } from "./pages/AboutPage";
 import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
+import { GuestRoute } from "./components/routing/GuestRoute";
 
 function AppLayout() {
   const navigate = useNavigate();
@@ -24,8 +25,8 @@ function AppLayout() {
           <Route path="/" element={<HomePage onNavigate={(path) => navigate(path)} />} />
           <Route path="/cardapio" element={<MenuPage />} />
           <Route path="/sobre" element={<AboutPage onNavigate={(path) => navigate(path)} />} />
-          <Route path="/login" element={<LoginPage onNavigate={(path) => navigate(path)} />} />
-          <Route path="/cadastro" element={<RegisterPage onNavigate={(path) => navigate(path)} />} />
+          <Route path="/login" element={<GuestRoute><LoginPage onNavigate={(path) => navigate(path)} /></GuestRoute>} />
+          <Route path="/cadastro" element={<GuestRoute><RegisterPage onNavigate={(path) => navigate(path)} /></GuestRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
