@@ -17,14 +17,14 @@ export function MenuPage() {
     <div className="min-h-[calc(100vh-64px)] bg-background flex flex-col justify-between">
       <div>
         {/* Sticky Tab Header */}
-        <div className="bg-[#1a1a2e] px-4 sm:px-6 pt-4 pb-0 sticky top-[72px] z-30 shadow-xl">
+        <div className="bg-[#1a1a2e] px-4 sm:px-6 pt-3 sm:pt-4 pb-0 sticky top-[57px] sm:top-[72px] z-30 shadow-xl">
           <div className="max-w-7xl mx-auto">
-            <h1 className="font-display text-white text-3xl tracking-widest leading-none mb-3">
+            <h1 className="font-display text-white text-2xl sm:text-3xl tracking-widest leading-none mb-3">
               CARDÁPIO
             </h1>
 
             {/* Tabs */}
-            <div className="flex gap-1">
+            <div className="flex gap-1 overflow-x-auto no-scrollbar">
               {[
                 { id: "dogues", label: "🌭  DOGUES", count: products.length },
                 { id: "bebidas", label: "🥤  BEBIDAS", count: drinks.length },
@@ -32,7 +32,7 @@ export function MenuPage() {
                 <button
                   key={t.id}
                   onClick={() => setTab(t.id as "dogues" | "bebidas")}
-                  className={`px-6 py-2.5 font-display text-lg tracking-widest rounded-t-xl transition-all duration-200 flex items-center gap-2 cursor-pointer ${
+                  className={`px-4 sm:px-6 py-2 sm:py-2.5 font-display text-base sm:text-lg tracking-widest rounded-t-xl transition-all duration-200 flex items-center gap-2 cursor-pointer flex-shrink-0 ${
                     tab === t.id
                       ? "bg-background text-foreground"
                       : "text-white/50 hover:text-white"

@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { ShoppingCart, User, ArrowLeft } from "lucide-react";
+import { ShoppingCart, User, ArrowLeft, Menu } from "lucide-react";
 import logoComTexto from "../../imports/cachorro_e_texto_sem_fundo.png";
 import { useCart } from "../../hooks/useCart";
 import { useAuth } from "../../hooks/useAuth";
 import { CartDropdown } from "../cart/CartDropdown";
+import { MobileNavDrawer } from "./MobileNavDrawer";
 
 interface HeaderProps {
   currentPath?: string;
@@ -12,6 +13,7 @@ interface HeaderProps {
 
 export function Header({ currentPath = "/", onNavigate }: HeaderProps) {
   const [cartOpen, setCartOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { cartCount, cartBounce } = useCart();
   const { isAuthenticated, user } = useAuth();
 
@@ -20,6 +22,7 @@ export function Header({ currentPath = "/", onNavigate }: HeaderProps) {
   const handleNavClick = (e: React.MouseEvent, path: string) => {
     e.preventDefault();
     setCartOpen(false);
+    setMobileMenuOpen(false);
     if (onNavigate) {
       onNavigate(path);
     }
@@ -35,7 +38,18 @@ export function Header({ currentPath = "/", onNavigate }: HeaderProps) {
 
   return (
     <header className="bg-[#1a1a2e] sticky top-0 z-40 shadow-xl">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-4">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 sm:py-3 flex items-center gap-2 sm:gap-4">
+        {/* Mobile Hamburger Button */}
+        {!isAuthPath && (
+          <button
+            onClick={() => setMobileMenuOpen(true)}
+            className="lg:hidden p-2 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-colors cursor-pointer -ml-1 flex-shrink-0"
+            aria-label="Abrir menu de navegação"
+          >
+            <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
+          </button>
+        )}
+
         {/* Logo */}
         <button
           onClick={(e) => handleNavClick(e, "/")}
@@ -45,13 +59,13 @@ export function Header({ currentPath = "/", onNavigate }: HeaderProps) {
           <img
             src={logoComTexto}
             alt="Dogueria Du Maluko"
-            className="h-12 w-auto object-contain"
+            className="h-9 sm:h-12 max-w-[125px] sm:max-w-none w-auto object-contain"
           />
         </button>
 
-        {/* Nav — visible on store, cardapio & about */}
+        {/* Nav — visible on desktop */}
         {!isAuthPath && (
-          <nav className="hidden lg:flex items-center gap-5 ml-8">
+          <nav className="hidden lg:flex items-center gap-5 ml-6">
             {navLinks.map((link) => {
               const isActive = currentPath === link.path;
               return (
@@ -71,9 +85,9 @@ export function Header({ currentPath = "/", onNavigate }: HeaderProps) {
 
         <div className="flex-1" />
 
-        {/* Delivery badge */}
+        {/* Delivery badge — visible from medium screens up */}
         {!isAuthPath && (
-          <div className="hidden sm:flex items-center gap-1.5 text-white/60 text-xs font-semibold">
+          <div className="hidden md:flex items-center gap-1.5 text-white/60 text-xs font-semibold">
             <span className="text-green-400">🛵</span>
             DELIVERY EM RIBEIRÃO PIRES
           </div>
@@ -93,7 +107,7 @@ export function Header({ currentPath = "/", onNavigate }: HeaderProps) {
         {/* User button */}
         <button
           onClick={(e) => handleNavClick(e, isAuthenticated ? "/perfil" : "/login")}
-          className={`w-10 h-10 flex items-center justify-center rounded-full border transition-all duration-200 cursor-pointer ${isAuthPath || isAuthenticated
+          className={`w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full border transition-all duration-200 cursor-pointer flex-shrink-0 ${isAuthPath || isAuthenticated
               ? "border-primary/60 text-primary bg-primary/10"
               : "border-white/20 text-white/70 hover:text-white hover:border-white/50 hover:bg-[rgba(255,255,255,0.1)]"
             }`}
@@ -104,17 +118,17 @@ export function Header({ currentPath = "/", onNavigate }: HeaderProps) {
         </button>
 
         {/* Cart button + dropdown */}
-        <div className="relative">
+        <div className="relative flex-shrink-0">
           <button
             onClick={() => setCartOpen((v) => !v)}
-            className={`relative flex items-center gap-2 bg-primary hover:bg-orange-400 text-white px-4 py-2.5 rounded-full font-bold text-sm tracking-wide transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg cursor-pointer ${cartBounce ? "scale-110" : ""
+            className={`relative flex items-center gap-2 bg-primary hover:bg-orange-400 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-full font-bold text-sm tracking-wide transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg cursor-pointer ${cartBounce ? "scale-110" : ""
               } ${cartOpen ? "ring-2 ring-white/30" : ""}`}
             aria-label="Abrir carrinho"
           >
             <ShoppingCart className="w-4 h-4 flex-shrink-0" />
             <span className="hidden sm:inline">CARRINHO</span>
             {cartCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-accent text-foreground rounded-full min-w-5 h-5 px-1 flex items-center justify-center text-xs font-black shadow-sm">
+              <span className="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 bg-accent text-foreground rounded-full min-w-5 h-5 px-1 flex items-center justify-center text-xs font-black shadow-sm">
                 {cartCount}
               </span>
             )}
@@ -127,6 +141,14 @@ export function Header({ currentPath = "/", onNavigate }: HeaderProps) {
           )}
         </div>
       </div>
+
+      {/* Mobile Navigation Drawer */}
+      <MobileNavDrawer
+        isOpen={mobileMenuOpen}
+        onClose={() => setMobileMenuOpen(false)}
+        currentPath={currentPath}
+        onNavigate={onNavigate}
+      />
     </header>
   );
 }

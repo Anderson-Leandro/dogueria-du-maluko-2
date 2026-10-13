@@ -132,7 +132,7 @@ export function RegisterPage({ onNavigate }: RegisterPageProps) {
               onChange={setField("email")}
               error={errors.email}
             />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-start">
               <Field
                 label="Senha"
                 icon={<Lock className="w-4 h-4" />}
@@ -145,7 +145,7 @@ export function RegisterPage({ onNavigate }: RegisterPageProps) {
                   <button
                     type="button"
                     onClick={() => setShowPassword((v) => !v)}
-                    className="text-white/30 hover:text-white/70 transition-colors flex-shrink-0 cursor-pointer"
+                    className="w-8 h-8 flex items-center justify-center rounded-lg text-white/40 hover:text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer flex-shrink-0"
                     aria-label={showPassword ? "Ocultar senha" : "Ver senha"}
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -164,7 +164,7 @@ export function RegisterPage({ onNavigate }: RegisterPageProps) {
                   <button
                     type="button"
                     onClick={() => setShowConfirm((v) => !v)}
-                    className="text-white/30 hover:text-white/70 transition-colors flex-shrink-0 cursor-pointer"
+                    className="w-8 h-8 flex items-center justify-center rounded-lg text-white/40 hover:text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer flex-shrink-0"
                     aria-label={showConfirm ? "Ocultar confirmação" : "Ver confirmação"}
                   >
                     {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
