@@ -11,7 +11,7 @@
 
 - **Disciplina:** Programação para Dispositivos Móveis II
 - **Docente:** Prof. Dr. Bruno Zolotareff dos Santos
-- **Contexto:** Projeto prático de desenvolvimento com foco em arquitetura de software, prototipação ágil, desenvolvimento Web com **React** e evolução para aplicativo móvel com **React Native**.
+- **Contexto:** Projeto prático de desenvolvimento com foco em arquitetura de software, prototipação ágil, desenvolvimento Web com **React** e evolução para aplicativo móvel com **React Native** (agora em `apps/mobile`).
 - **Equipe / Desenvolvedores:**
   - Anderson Mendes Leandro e Ismael Alves de Almeida
 
@@ -19,9 +19,16 @@
 
 ## 📌 Sobre o Projeto
 
-A **Dogueria Du Maluko** é uma aplicação web completa desenvolvida em **React 18**, **TypeScript**, **Tailwind CSS v4** e **React Router v7**. O projeto conta com uma arquitetura modular em camadas técnicas (*flat architecture*), separando regras de negócio, serviços assíncronos e componentes visuais.
+A **Dogueria Du Maluko** é um **monorepo** com três aplicações que compartilham a mesma regra de negócio:
 
-Os dados vêm de uma **API REST própria em Node.js** (pasta [`backend/`](backend/)), no padrão **MVC**, com **Express**, **Prisma** e **SQLite**. Ela fornece catálogo, conteúdo institucional, autenticação com JWT e pedidos.
+| Parte | Pasta | Tecnologias |
+|---|---|---|
+| 🌐 **Front-end web** | [`apps/web/`](apps/web/) | React 18, TypeScript, Vite, Tailwind CSS v4, React Router v7 |
+| 📱 **App mobile** | [`apps/mobile/`](apps/mobile/) | React Native 0.88, Expo SDK 58, Expo Router (Android, iOS e navegador) |
+| 🧩 **Código compartilhado** | [`packages/core/`](packages/core/) | Tipos, serviços da API, hooks, contexts e utilitários usados pelos dois apps |
+| 🔌 **API REST** | [`backend/`](backend/) | Node.js, Express, Prisma e SQLite, no padrão **MVC** |
+
+A API fornece catálogo, conteúdo institucional, autenticação com JWT e pedidos. O web e o mobile consomem essa API pelo mesmo código de `packages/core`: uma correção numa regra (validação, cálculo, sessão) vale para os dois.
 
 ---
 
@@ -77,49 +84,45 @@ Os dados vêm de uma **API REST própria em Node.js** (pasta [`backend/`](backen
   - Skeletons enquanto o catálogo e os pedidos carregam.
   - Mensagem amigável com botão **"Tentar novamente"** quando a API está indisponível.
 
+- 📱 **App Mobile (React Native / Expo)**:
+  - Abas **Início**, **Cardápio**, **Carrinho** (com contador) e **Conta**; telas de Login, Cadastro, Meus pedidos, Sobre e detalhe do produto.
+  - Mesmas regras do web: destaques, bebidas por categoria, frete vindo da API, checkout que exige login e volta ao carrinho depois de entrar, erros nos campos, aviso de sessão expirada e histórico protegido.
+  - Sessão (token JWT) guardada no armazenamento seguro do aparelho (**Keychain** no iOS, **Keystore** no Android); carrinho no AsyncStorage. Ambos sobrevivem ao fechar o app.
+  - Mesmo visual do web (cores da marca e fontes Bangers + Nunito).
+
 ---
 
 ## 🏛️ Arquitetura do Projeto
 
-O projeto adota uma **estrutura plana organizada por camadas técnicas**, promovendo alta manutenibilidade e baixo acoplamento:
-
 ```
-src/                     # Front-end (React)
-├── components/          # Componentes visuais reutilizáveis
-│   ├── auth/            # AuthLayout, Field (inputs com ícones e erros)
-│   ├── cart/            # CartDropdown
-│   ├── feedback/        # LoadState (skeletons e estado de erro com "tentar novamente")
-│   ├── layout/          # Header (menu do usuário), MobileNavDrawer, Footer, PromoStrip
-│   ├── products/        # ProductCard, DrinkCard, ProductModal
-│   ├── routing/         # GuestRoute (só para visitantes) e PrivateRoute (exige login)
-│   └── ui/              # Componentes base Radix UI / Shadcn
-├── context/             # Estado global: CartContext (localStorage) e AuthContext (sessão JWT)
-├── hooks/               # useProducts, useDrinks, useAbout, useMyOrders (via useApiResource), useCart, useAuth, useSettings
-├── pages/               # Home, Cardápio, Sobre, Login, Cadastro, Meus Pedidos
-├── services/            # Integração com a API
-│   ├── api.ts           # apiFetch (base URL, JSON, Bearer token) e ApiError
-│   ├── productService.ts, drinkService.ts, aboutService.ts, settingsService.ts
-│   ├── authService.ts   # login, cadastro, /auth/me e logout
-│   └── orderService.ts  # criação e listagem de pedidos
-├── types/               # product, drink, cart, user, about, order, settings
-├── utils/               # formatPrice, formatCep, validadores de formulário
-└── App.tsx / main.tsx   # Rotas, provedores globais e Toaster
+apps/
+├── web/                     # Front-end web (React 18 + Vite)
+│   └── src/
+│       ├── components/      # auth, cart, feedback, layout, products, routing (Guest/PrivateRoute), ui (Radix/Shadcn)
+│       ├── pages/           # Home, Cardápio, Sobre, Login, Cadastro, Meus Pedidos
+│       ├── services/ hooks/ context/ types/ utils/   # re-exportam de @dogueria/core
+│       └── main.tsx         # configureCore(): API em "/api" (proxy do Vite) + localStorage
+└── mobile/                  # App React Native (Expo SDK 58 + Expo Router)
+    ├── src/app/             # Rotas: (tabs)/ início, cardápio, carrinho, conta; login, cadastro, meus-pedidos, sobre, produto/[id]
+    ├── src/components/      # ProductCard, DrinkRow, OrderCard, Toast, Field, Button, LoadState, QtyStepper
+    ├── src/lib/             # setup (configureCore), URL da API, storage (SecureStore + AsyncStorage)
+    └── metro.config.js      # resolve packages/core com as dependências do app
 
-backend/                 # API REST (Node + TypeScript, MVC)
-├── prisma/
-│   ├── schema.prisma    # Entidades: Product, ProductIngredient, DrinkCategory, User, Order, OrderItem, StoreStat, TimelineEvent, TeamMember, StoreValue
-│   ├── migrations/      # Migrations do SQLite
-│   ├── seed.ts          # Popula catálogo, conteúdo "Sobre" e usuário demo
-│   └── seed-data/       # Dados iniciais do catálogo e da página Sobre
-└── src/
-    ├── routes/          # Mapeamento de URLs → controllers
-    ├── controllers/     # (C) validam a entrada e orquestram
-    ├── models/          # (M) acesso a dados (Prisma) e regras de negócio
-    ├── views/           # (V) serializers: banco → JSON no formato dos types do front
-    ├── validators/      # Schemas zod (mesmas regras e mensagens do front)
-    ├── middlewares/     # Auth JWT, rate limit, tratamento de erros
-    └── config/, lib/, utils/
+packages/
+└── core/src/                # Código compartilhado (TypeScript puro + React)
+    ├── config.ts            # configureCore({ apiBaseUrl, storage }) — cada plataforma injeta os seus
+    ├── services/            # apiFetch, sessão, auth, produtos, bebidas, sobre, pedidos, settings
+    ├── hooks/               # useProducts, useDrinks, useAbout, useMyOrders, useSettings, useApiResource…
+    ├── context/             # AuthContext (sessão JWT) e CartContext
+    ├── types/ utils/        # Tipos e utilitários (formatPrice, máscaras, validadores)
+
+backend/                     # API REST (Node + TypeScript, MVC)
+├── prisma/                  # schema (Product, DrinkCategory, User, Order, OrderItem, conteúdo "Sobre"), migrations e seed
+└── src/                     # routes → controllers (C) → models (M) → views (V, serializers JSON)
+                             # + validators (zod), middlewares (JWT, rate limit, erros)
 ```
+
+**Por que não npm workspaces?** O web usa React 18 e o mobile usa React 19 (exigência do Expo SDK 58). Com workspaces, as duas versões disputariam a mesma `node_modules` e quebrariam os hooks. Por isso cada app tem a **sua própria instalação**, e o `packages/core` é só código-fonte: o Vite (web) e o Metro (mobile) o resolvem usando as dependências de cada app.
 
 ---
 
@@ -154,24 +157,33 @@ Base: `http://localhost:3333/api`. Erros seguem o formato `{ "error": "mensagem"
 - **[Radix UI](https://www.radix-ui.com/)** — Componentes acessíveis e customizáveis
 - **[Express](https://expressjs.com/)** + **[Prisma](https://www.prisma.io/)** + **SQLite** — API REST no backend
 - **[Zod](https://zod.dev/)**, **bcryptjs** e **jsonwebtoken** — validação, hash de senha e sessão
+- **[React Native](https://reactnative.dev/)** + **[Expo](https://expo.dev/)** (SDK 58) + **[Expo Router](https://docs.expo.dev/router/introduction/)** — app mobile
+- **expo-secure-store** e **AsyncStorage** — sessão segura e carrinho no aparelho
 
 ---
 
 ## 🚀 Como Executar o Projeto
 
 ### Pré-requisitos
-- **Node.js** 20 ou superior
-- **npm**
+- **Node.js** 20 ou superior e **npm**
+- Para o celular: o app **Expo Go** (Android ou iOS), na mesma rede Wi-Fi do computador
 
-### 1. Backend (API)
+### 1. Instalar as dependências
+
+Na raiz do projeto (cada parte tem a sua instalação):
+
+```bash
+npm run install:all          # apps/web, backend e apps/mobile
+```
+
+### 2. Backend (API)
 
 ```bash
 cd backend
-npm install
 cp .env.example .env          # depois troque JWT_SECRET por um valor aleatório (mín. 32 caracteres)
 npx prisma migrate dev        # cria o banco SQLite (prisma/dev.db)
 npm run db:seed               # popula catálogo, conteúdo e o usuário demo
-npm run dev                   # API em http://localhost:3333/api
+npm run dev                   # API em http://localhost:3333/api (ou, da raiz: npm run dev:api)
 ```
 
 Para gerar um segredo: `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"`.
@@ -180,31 +192,59 @@ Para gerar um segredo: `node -e "console.log(require('crypto').randomBytes(48).t
 
 > ⚠️ `npm run db:seed` apaga **todos** os dados (inclusive usuários e pedidos) antes de popular. Por isso ele é bloqueado com `NODE_ENV=production`.
 
-### 2. Front-end
+### 3. Front-end web
 
-Em outro terminal, na raiz do projeto:
+Em outro terminal, na raiz:
 
 ```bash
-npm install
 npm run dev                   # http://localhost:5173
 ```
 
-O front chama a API pelo caminho relativo `/api`, e o **proxy do Vite** (`vite.config.ts`) repassa essas chamadas para `http://localhost:3333`. Por isso não é preciso configurar URL nem CORS. Para usar uma API em outro endereço, defina `VITE_API_URL` num `.env` (veja `.env.example`).
+O web chama a API pelo caminho relativo `/api`, e o **proxy do Vite** (`apps/web/vite.config.ts`) repassa para `http://localhost:3333`, sem precisar configurar URL nem CORS. Para usar uma API em outro endereço, defina `VITE_API_URL` em `apps/web/.env` (veja `apps/web/.env.example`).
+
+### 4. App mobile (Expo)
+
+Com a API rodando, em outro terminal, na raiz:
+
+```bash
+npm run dev:mobile            # abre o Expo; escaneie o QR code com o Expo Go
+npm run dev:mobile:web        # ou rode o app no navegador (http://localhost:8081)
+```
+
+O app descobre a API sozinho: usa o IP da máquina que roda o `expo start`, na porta 3333. Se o celular não alcançar a API (rede diferente, firewall), defina a URL em `apps/mobile/.env`:
+
+```bash
+EXPO_PUBLIC_API_URL=http://SEU_IP:3333/api
+```
+
+A URL em uso aparece no rodapé da aba **Conta**, o que ajuda a diagnosticar problemas de conexão.
 
 ### ☁️ Rodando no GitHub Codespaces
 
 O repositório inclui um **devcontainer** (`.devcontainer/`) que prepara tudo automaticamente:
 
-1. No GitHub, clique em **Code → Codespaces → Create codespace** nesta branch.
-2. Aguarde a criação. O script `.devcontainer/setup.sh` instala as dependências, cria o `backend/.env` com um `JWT_SECRET` aleatório e cria e popula o banco.
+1. No GitHub, clique em **Code → Codespaces → Create codespace** na branch desejada.
+2. Aguarde a criação. O script `.devcontainer/setup.sh` instala as dependências do web, do mobile e do backend, cria o `backend/.env` com um `JWT_SECRET` aleatório e cria e popula o banco.
 3. Abra **dois terminais**:
    ```bash
    npm run dev:api     # terminal 1: API na porta 3333
-   npm run dev         # terminal 2: front na porta 5173
+   npm run dev         # terminal 2: front web na porta 5173
    ```
 4. Abra a porta **5173** pela aba **Portas** (ou pela notificação que aparece).
 
-Como o navegador fala só com a porta 5173 e o Vite repassa `/api` internamente para a API, **a porta 3333 não precisa ser pública** e não há problemas de CORS.
+No web, o navegador fala só com a porta 5173 e o Vite repassa `/api` internamente para a API, então **a porta 3333 não precisa ser pública**.
+
+**App mobile no Codespaces.** O celular não está na rede do Codespace, então:
+
+1. Deixe a porta **3333** pública: na aba **Portas**, clique com o botão direito em 3333 → **Port Visibility → Public**. Também dá para usar o terminal: `gh codespace ports visibility 3333:public -c $CODESPACE_NAME`. O app já aponta automaticamente para a URL pública da API do Codespace.
+2. Suba o Expo com túnel e escaneie o QR code com o Expo Go:
+   ```bash
+   npm run dev:mobile:tunnel
+   ```
+   Na primeira vez, o Expo pode pedir para instalar o `@expo/ngrok`; confirme.
+3. Para mostrar o app no próprio navegador do Codespace: `npm run dev:mobile:web` e abra a porta **8081**. Mesmo assim, a porta 3333 precisa estar pública.
+
+> Com a porta 3333 pública, qualquer pessoa com a URL alcança a API do Codespace. Volte a visibilidade para **Private** depois da apresentação.
 
 > Se o setup automático não tiver rodado, execute `bash .devcontainer/setup.sh` manualmente. Ele pode ser rodado de novo com segurança: não recria o `.env` nem apaga o banco existente.
 
@@ -212,14 +252,18 @@ Como o navegador fala só com a porta 5173 e o Vite repassa `/api` internamente 
 
 ## 📄 Scripts Disponíveis
 
-**Front-end (raiz)**
+**Raiz do monorepo**
 
 | Comando | Descrição |
 |---|---|
-| `npm run dev` | Servidor de desenvolvimento Vite (com proxy de `/api` para a API) |
-| `npm run dev:api` | Atalho para subir a API (`backend/`) a partir da raiz |
-| `npm run build` | Build de produção |
-| `npm run typecheck` | Verificação de tipos (TypeScript) |
+| `npm run install:all` | Instala as dependências de `apps/web`, `backend` e `apps/mobile` |
+| `npm run dev` / `npm run dev:web` | Front web (Vite, com proxy de `/api` para a API) |
+| `npm run dev:api` | API (`backend/`) |
+| `npm run dev:mobile` | App mobile (Expo; QR code para o Expo Go) |
+| `npm run dev:mobile:tunnel` | App mobile via túnel (Codespaces ou redes diferentes) |
+| `npm run dev:mobile:web` | App mobile no navegador (porta 8081) |
+| `npm run build` | Build de produção do web |
+| `npm run typecheck` | Verificação de tipos do web, do backend e do mobile |
 
 **Backend (`backend/`)**
 

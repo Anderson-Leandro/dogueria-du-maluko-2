@@ -6,10 +6,11 @@
   "postCreateCommand": "bash .devcontainer/setup.sh",
 
   // Só a porta do front precisa ser aberta no navegador: o Vite repassa /api para a 3333
-  "forwardPorts": [5173, 3333],
+  "forwardPorts": [5173, 3333, 8081],
   "portsAttributes": {
     "5173": { "label": "Front-end (Vite)", "onAutoForward": "openBrowser" },
-    "3333": { "label": "API (Express)", "onAutoForward": "silent" }
+    "3333": { "label": "API (Express)", "onAutoForward": "silent" },
+    "8081": { "label": "App mobile (Expo)", "onAutoForward": "silent" }
   },
 
   "customizations": {
