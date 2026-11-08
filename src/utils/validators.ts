@@ -57,3 +57,19 @@ export function validateRegisterForm(data: RegisterData): FormErrors {
 
   return errors;
 }
+
+/**
+ * Converte o erro da API em erros do formulário: usa apenas os campos que o
+ * formulário exibe e, se nenhum servir, mostra a mensagem geral no campo padrão.
+ */
+export function toFormErrors(
+  fields: Record<string, string> | undefined,
+  visibleFields: readonly string[],
+  fallbackField: string,
+  message: string
+): FormErrors {
+  const visible = Object.fromEntries(
+    Object.entries(fields ?? {}).filter(([key]) => visibleFields.includes(key))
+  );
+  return Object.keys(visible).length > 0 ? visible : { [fallbackField]: message };
+}

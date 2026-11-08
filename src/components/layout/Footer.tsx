@@ -15,7 +15,7 @@ export function Footer({ darker = false }: FooterProps) {
         DOGUERIA DU MALUKO
       </div>
       <p className="mb-1">Seu hot dog mais divertido de Ribeirão Pires!</p>
-      <p className="text-white/30">© 2024 — Todos os direitos reservados</p>
+      <p className="text-white/30">© {new Date().getFullYear()} — Todos os direitos reservados</p>
     </footer>
   );
 }

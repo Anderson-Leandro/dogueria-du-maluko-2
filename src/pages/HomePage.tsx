@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { Product } from "../types/product";
 import { useProducts } from "../hooks/useProducts";
+import { CardGridSkeleton, ErrorState } from "../components/feedback/LoadState";
 import { ProductCard } from "../components/products/ProductCard";
 import { ProductModal } from "../components/products/ProductModal";
 import { PromoStrip } from "../components/layout/PromoStrip";
@@ -12,8 +13,13 @@ interface HomePageProps {
 }
 
 export function HomePage({ onNavigate }: HomePageProps) {
-  const { products } = useProducts();
+  const { products, loading, error, refreshProducts } = useProducts();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+  const featuredProducts = useMemo(() => {
+    const featured = products.filter((p) => p.featured);
+    return featured.length > 0 ? featured : products.slice(0, 4);
+  }, [products]);
 
   const handleGoMenu = () => {
     if (onNavigate) {
@@ -35,14 +41,14 @@ export function HomePage({ onNavigate }: HomePageProps) {
             🔥 Seu hot dog mais divertido
           </p>
           <h1 className="font-display tracking-widest leading-none">
-            <span className="block text-accent text-6xl sm:text-8xl">A DOGUERIA</span>
-            <span className="block text-white text-6xl sm:text-8xl">MAIS MALUCA</span>
-            <span className="block text-accent text-5xl sm:text-6xl">DE RIBEIRÃO PIRES!</span>
+            <span className="block text-accent text-4xl sm:text-6xl md:text-8xl">A DOGUERIA</span>
+            <span className="block text-white text-4xl sm:text-6xl md:text-8xl">MAIS MALUCA</span>
+            <span className="block text-accent text-3xl sm:text-5xl md:text-6xl">DE RIBEIRÃO PIRES!</span>
           </h1>
           <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center items-center">
             <button
               onClick={handleGoMenu}
-              className="bg-primary hover:bg-orange-400 text-white font-display text-2xl tracking-widest px-10 py-3.5 rounded-full transition-all duration-200 hover:scale-105 active:scale-95 shadow-xl cursor-pointer"
+              className="bg-primary hover:bg-orange-400 text-white font-display text-xl sm:text-2xl tracking-widest px-8 sm:px-10 py-3 sm:py-3.5 rounded-full transition-all duration-200 hover:scale-105 active:scale-95 shadow-xl cursor-pointer"
             >
               PEÇA JÁ SEU DOGUE!
             </button>
@@ -72,15 +78,21 @@ export function HomePage({ onNavigate }: HomePageProps) {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onSelect={setSelectedProduct}
-            />
-          ))}
-        </div>
+        {error ? (
+          <ErrorState message={error} onRetry={refreshProducts} />
+        ) : loading ? (
+          <CardGridSkeleton count={4} />
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            {featuredProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onSelect={setSelectedProduct}
+              />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Promo strip */}

@@ -9,6 +9,7 @@ interface FieldProps {
   onChange: (value: string) => void;
   error?: string;
   rightSlot?: React.ReactNode;
+  maxLength?: number;
 }
 
 export function Field({
@@ -20,6 +21,7 @@ export function Field({
   onChange,
   error,
   rightSlot,
+  maxLength,
 }: FieldProps) {
   return (
     <div className="flex flex-col gap-1">
@@ -27,19 +29,26 @@ export function Field({
         {label}
       </label>
       <div
-        className={`flex items-center gap-3 bg-[rgba(255,255,255,0.05)] border rounded-xl px-4 py-3 focus-within:border-primary transition-colors ${
+        className={`h-12 flex items-center gap-3 bg-[rgba(255,255,255,0.05)] border rounded-xl px-3.5 focus-within:border-primary transition-colors ${
           error ? "border-red-500/70" : "border-white/15"
         }`}
       >
-        <span className="text-white/40 flex-shrink-0">{icon}</span>
+        <span className="text-white/40 flex-shrink-0 w-5 h-5 flex items-center justify-center">
+          {icon}
+        </span>
         <input
           type={type}
           placeholder={placeholder}
           value={value}
+          maxLength={maxLength}
           onChange={(e) => onChange(e.target.value)}
-          className="flex-1 bg-transparent text-white placeholder-white/30 text-sm outline-none font-body"
+          className="flex-1 min-w-0 h-full bg-transparent text-white placeholder-white/30 text-sm outline-none font-body leading-none"
         />
-        {rightSlot}
+        {rightSlot && (
+          <div className="flex items-center justify-center flex-shrink-0">
+            {rightSlot}
+          </div>
+        )}
       </div>
       {error && <p className="text-red-400 text-xs font-semibold">{error}</p>}
     </div>

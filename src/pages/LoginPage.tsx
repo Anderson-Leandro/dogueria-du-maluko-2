@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router";
 import { Mail, Lock, Eye, EyeOff, CheckCircle } from "lucide-react";
+import { toast } from "sonner";
 import { AuthLayout } from "../components/auth/AuthLayout";
 import { Field } from "../components/auth/Field";
 import { useAuth } from "../hooks/useAuth";
-import { validateLoginForm, FormErrors } from "../utils/validators";
+import { validateLoginForm, FormErrors, toFormErrors } from "../utils/validators";
 
 interface LoginPageProps {
   onNavigate?: (path: string) => void;
@@ -11,6 +13,8 @@ interface LoginPageProps {
 
 export function LoginPage({ onNavigate }: LoginPageProps) {
   const { login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -32,9 +36,11 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
     try {
       const res = await login({ email, password });
       if (res.success) {
+        // O GuestRoute redireciona (para a rota de origem ou "/") assim que a sessão existe; o toast confirma o login
+        toast.success("Login realizado. Bom apetite! 🌭");
         setSuccess(true);
       } else {
-        setErrors({ email: res.error || "Credenciais inválidas." });
+        setErrors(toFormErrors(res.fields, ["email", "password"], "email", res.error || "Credenciais inválidas."));
       }
     } finally {
       setIsSubmitting(false);
@@ -47,11 +53,8 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
     }
   };
 
-  const handleGoRegister = () => {
-    if (onNavigate) {
-      onNavigate("/cadastro");
-    }
-  };
+  // Mantém o state (rota de origem) ao alternar entre login e cadastro
+  const handleGoRegister = () => navigate("/cadastro", { state: location.state });
 
   if (success) {
     return (
@@ -107,7 +110,7 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
-              className="text-white/30 hover:text-white/70 transition-colors flex-shrink-0 cursor-pointer"
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-white/40 hover:text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer flex-shrink-0"
               aria-label={showPassword ? "Ocultar senha" : "Ver senha"}
             >
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -120,7 +123,7 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
             href="#"
             onClick={(e) => {
               e.preventDefault();
-              alert("Instruções de recuperação de senha enviadas para seu e-mail!");
+              toast.info("Recuperação de senha disponível em breve.");
             }}
             className="text-primary hover:text-orange-400 text-xs font-bold transition-colors cursor-pointer"
           >

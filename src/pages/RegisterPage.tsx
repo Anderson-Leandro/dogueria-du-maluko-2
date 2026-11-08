@@ -1,10 +1,14 @@
 import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router";
 import { User as UserIcon, Mail, Lock, Eye, EyeOff, MapPin, Home, Hash, CheckCircle } from "lucide-react";
+import { toast } from "sonner";
 import { AuthLayout } from "../components/auth/AuthLayout";
 import { Field } from "../components/auth/Field";
 import { useAuth } from "../hooks/useAuth";
 import { formatCep } from "../utils/masks";
-import { validateRegisterForm, FormErrors } from "../utils/validators";
+import { validateRegisterForm, FormErrors, toFormErrors } from "../utils/validators";
+
+const REGISTER_FIELDS = ["name", "email", "password", "confirmPassword", "zipCode", "street", "number"] as const;
 import { RegisterData } from "../types/user";
 
 interface RegisterPageProps {
@@ -13,6 +17,8 @@ interface RegisterPageProps {
 
 export function RegisterPage({ onNavigate }: RegisterPageProps) {
   const { register } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [form, setForm] = useState<RegisterData>({
     name: "",
     email: "",
@@ -52,9 +58,13 @@ export function RegisterPage({ onNavigate }: RegisterPageProps) {
     try {
       const res = await register(form);
       if (res.success) {
+        // O GuestRoute redireciona (para a rota de origem ou "/") assim que a sessão existe; o toast confirma o cadastro
+        toast.success(`Bem-vindo(a), ${form.name.trim().split(" ")[0]}! Sua conta foi criada.`);
         setSuccess(true);
       } else {
-        setErrors({ email: res.error || "Erro ao realizar cadastro." });
+        setErrors(
+          toFormErrors(res.fields, REGISTER_FIELDS, "email", res.error || "Erro ao realizar cadastro.")
+        );
       }
     } finally {
       setIsSubmitting(false);
@@ -67,11 +77,8 @@ export function RegisterPage({ onNavigate }: RegisterPageProps) {
     }
   };
 
-  const handleGoLogin = () => {
-    if (onNavigate) {
-      onNavigate("/login");
-    }
-  };
+  // Mantém o state (rota de origem) ao alternar entre login e cadastro
+  const handleGoLogin = () => navigate("/login", { state: location.state });
 
   if (success) {
     return (
@@ -132,7 +139,7 @@ export function RegisterPage({ onNavigate }: RegisterPageProps) {
               onChange={setField("email")}
               error={errors.email}
             />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-start">
               <Field
                 label="Senha"
                 icon={<Lock className="w-4 h-4" />}
@@ -145,7 +152,7 @@ export function RegisterPage({ onNavigate }: RegisterPageProps) {
                   <button
                     type="button"
                     onClick={() => setShowPassword((v) => !v)}
-                    className="text-white/30 hover:text-white/70 transition-colors flex-shrink-0 cursor-pointer"
+                    className="w-8 h-8 flex items-center justify-center rounded-lg text-white/40 hover:text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer flex-shrink-0"
                     aria-label={showPassword ? "Ocultar senha" : "Ver senha"}
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -164,7 +171,7 @@ export function RegisterPage({ onNavigate }: RegisterPageProps) {
                   <button
                     type="button"
                     onClick={() => setShowConfirm((v) => !v)}
-                    className="text-white/30 hover:text-white/70 transition-colors flex-shrink-0 cursor-pointer"
+                    className="w-8 h-8 flex items-center justify-center rounded-lg text-white/40 hover:text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer flex-shrink-0"
                     aria-label={showConfirm ? "Ocultar confirmação" : "Ver confirmação"}
                   >
                     {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -217,6 +224,7 @@ export function RegisterPage({ onNavigate }: RegisterPageProps) {
                 icon={<Home className="w-4 h-4" />}
                 placeholder="Apto 4B, Bloco C (opcional)"
                 value={form.complement || ""}
+                maxLength={80}
                 onChange={setField("complement")}
               />
             </div>

@@ -1,6 +1,5 @@
-import { AboutData } from "../types/about";
 
-export const mockAboutData: AboutData = {
+export const mockAboutData = {
   stats: [
     { value: "5+", label: "Anos de história" },
     { value: "200+", label: "Pedidos por dia" },

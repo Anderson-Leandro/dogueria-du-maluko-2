@@ -10,4 +10,6 @@ export interface Product extends Purchasable {
   fullDescription: string;
   badge?: string;
   ingredients: string[];
+  /** Exibido na vitrine "mais pedidos" da Home */
+  featured?: boolean;
 }

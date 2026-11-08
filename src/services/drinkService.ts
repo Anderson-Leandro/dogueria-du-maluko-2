@@ -1,29 +1,19 @@
 import { Drink, DrinkCategory, DrinkCategoryInfo } from "../types/drink";
-import { mockDrinks, mockDrinkCategories } from "../data/drinks.data";
-import { simulateNetworkDelay } from "./api";
+import { apiFetch } from "./api";
 
 export const drinkService = {
-  /**
-   * Obtém a lista completa de bebidas
-   */
-  async getDrinks(): Promise<Drink[]> {
-    await simulateNetworkDelay(200);
-    return [...mockDrinks];
+  /** Lista todas as bebidas ativas */
+  getDrinks(signal?: AbortSignal): Promise<Drink[]> {
+    return apiFetch<Drink[]>("/drinks", { signal });
   },
 
-  /**
-   * Obtém as categorias de bebidas com labels e emojis
-   */
-  async getCategories(): Promise<DrinkCategoryInfo[]> {
-    await simulateNetworkDelay(100);
-    return [...mockDrinkCategories];
+  /** Categorias de bebidas com labels e emojis */
+  getCategories(signal?: AbortSignal): Promise<DrinkCategoryInfo[]> {
+    return apiFetch<DrinkCategoryInfo[]>("/drinks/categories", { signal });
   },
 
-  /**
-   * Obtém as bebidas filtradas por categoria
-   */
-  async getDrinksByCategory(category: DrinkCategory): Promise<Drink[]> {
-    await simulateNetworkDelay(150);
-    return mockDrinks.filter((d) => d.category === category);
+  /** Bebidas de uma categoria */
+  getDrinksByCategory(category: DrinkCategory): Promise<Drink[]> {
+    return apiFetch<Drink[]>(`/drinks?category=${encodeURIComponent(category)}`);
   },
 };

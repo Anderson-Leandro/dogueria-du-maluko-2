@@ -1,13 +1,14 @@
 import React from "react";
 import { useAbout } from "../hooks/useAbout";
 import { Footer } from "../components/layout/Footer";
+import { ErrorState } from "../components/feedback/LoadState";
 
 interface AboutPageProps {
   onNavigate?: (path: string) => void;
 }
 
 export function AboutPage({ onNavigate }: AboutPageProps) {
-  const { aboutData } = useAbout();
+  const { aboutData, loading, error, refreshAboutData } = useAbout();
 
   const handleGoMenu = () => {
     if (onNavigate) {
@@ -15,7 +16,20 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
     }
   };
 
-  if (!aboutData) return null;
+  if (error || loading || !aboutData) {
+    return (
+      <div className="bg-[#0f0f1a] text-white min-h-[calc(100vh-64px)] flex flex-col justify-between">
+        {error ? (
+          <ErrorState message={error} onRetry={refreshAboutData} dark />
+        ) : (
+          <div className="flex flex-1 items-center justify-center py-24" aria-busy="true">
+            <span className="text-5xl animate-bounce" aria-label="Carregando">🌭</span>
+          </div>
+        )}
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-[#0f0f1a] text-white min-h-[calc(100vh-64px)]">

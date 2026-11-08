@@ -1,13 +1,9 @@
 import { AboutData } from "../types/about";
-import { mockAboutData } from "../data/about.data";
-import { simulateNetworkDelay } from "./api";
+import { apiFetch } from "./api";
 
 export const aboutService = {
-  /**
-   * Obtém os dados da página Sobre Nós (estatísticas, timeline, time, valores)
-   */
-  async getAboutData(): Promise<AboutData> {
-    await simulateNetworkDelay(200);
-    return { ...mockAboutData };
+  /** Dados da página Sobre Nós (estatísticas, timeline, time, valores) */
+  getAboutData(signal?: AbortSignal): Promise<AboutData> {
+    return apiFetch<AboutData>("/about", { signal });
   },
 };

@@ -1,13 +1,12 @@
-import { Drink, DrinkCategoryInfo } from "../types/drink";
 
-export const mockDrinkCategories: DrinkCategoryInfo[] = [
+export const mockDrinkCategories = [
   { key: "refrigerante", label: "Refrigerantes", emoji: "🥤" },
   { key: "suco", label: "Sucos da Casa", emoji: "🍊" },
   { key: "cerveja", label: "Cervejas", emoji: "🍺" },
   { key: "agua", label: "Águas", emoji: "💧" },
 ];
 
-export const mockDrinks: Drink[] = [
+export const mockDrinks = [
   {
     id: 101,
     category: "refrigerante",

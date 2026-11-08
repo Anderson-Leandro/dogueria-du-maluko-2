@@ -1,6 +1,5 @@
-import { Product } from "../types/product";
 
-export const mockProducts: Product[] = [
+export const mockProducts = [
   {
     id: 1,
     name: "DOG MANEIRO",
@@ -11,6 +10,7 @@ export const mockProducts: Product[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1599599810694-b5b37304c041?w=600&h=400&fit=crop&auto=format",
     badge: "MAIS PEDIDO",
+    featured: true,
     ingredients: ["Salsicha premium", "Purê cremoso", "Milho verde", "Batata palha", "Maionese"],
   },
   {
@@ -34,6 +34,7 @@ export const mockProducts: Product[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1678033382919-fa907632fdda?w=600&h=400&fit=crop&auto=format",
     badge: "ESPECIAL",
+    featured: true,
     ingredients: ["Salsicha especial", "Bacon fatiado", "Farofa de bacon", "Cebola caramelada"],
   },
   {
@@ -57,6 +58,7 @@ export const mockProducts: Product[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1721648373511-fb220d7f043f?w=600&h=400&fit=crop&auto=format",
     badge: "NOVO",
+    featured: true,
     ingredients: ["Salsicha", "Cream cheese", "Calabresa defumada", "Pimenta biquinho"],
   },
   {
@@ -69,6 +71,7 @@ export const mockProducts: Product[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1695089028533-c6e9cf1ee3cb?w=600&h=400&fit=crop&auto=format",
     badge: "TOP",
+    featured: true,
     ingredients: ["Salsicha premium", "Cheddar inglês", "Bacon crocante", "Cebola crispy", "Molho especial"],
   },
   {
