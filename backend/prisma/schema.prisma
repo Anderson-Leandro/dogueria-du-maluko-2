@@ -1,0 +1,140 @@
+// Schema da Dogueria Du Maluko
+// Convenções:
+//  - valores monetários em centavos (Int); as views convertem para reais
+//  - "enums" como String (validados no código) para compatibilidade com SQLite
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ── Catálogo ────────────────────────────────────────────────
+
+/// Dogues e bebidas em uma única tabela: ids nunca colidem no carrinho do front
+model Product {
+  id               Int                 @id @default(autoincrement())
+  type             String // "hotdog" | "drink"
+  name             String
+  shortDescription String? // dogues: descrição curta | bebidas: descrição
+  fullDescription  String?
+  priceCents       Int
+  imageUrl         String
+  badge            String?
+  featured         Boolean             @default(false)
+  active           Boolean             @default(true)
+  categoryId       Int?
+  category         DrinkCategory?      @relation(fields: [categoryId], references: [id])
+  ingredients      ProductIngredient[]
+  orderItems       OrderItem[]
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+
+  @@index([type, active])
+}
+
+model ProductIngredient {
+  id        Int     @id @default(autoincrement())
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name      String
+  position  Int
+
+  @@index([productId])
+}
+
+model DrinkCategory {
+  id       Int       @id @default(autoincrement())
+  key      String    @unique // "refrigerante" | "suco" | "cerveja" | "agua"
+  label    String
+  emoji    String
+  position Int
+  products Product[]
+}
+
+// ── Usuários e pedidos ──────────────────────────────────────
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique // sempre em minúsculas
+  passwordHash String
+  zipCode      String
+  street       String
+  number       String
+  complement   String?
+  role         String   @default("customer") // "customer" | "admin"
+  orders       Order[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Order {
+  id                 Int         @id @default(autoincrement())
+  userId             String
+  user               User        @relation(fields: [userId], references: [id])
+  status             String      @default("pending") // pending | preparing | delivering | delivered | canceled
+  subtotalCents      Int
+  deliveryFeeCents   Int
+  totalCents         Int
+  deliveryZipCode    String
+  deliveryStreet     String
+  deliveryNumber     String
+  deliveryComplement String?
+  notes              String?
+  items              OrderItem[]
+  createdAt          DateTime    @default(now())
+
+  @@index([userId, createdAt])
+}
+
+/// Snapshot do produto no momento da compra (nome e preço não mudam no histórico)
+model OrderItem {
+  id             Int     @id @default(autoincrement())
+  orderId        Int
+  order          Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId      Int
+  product        Product @relation(fields: [productId], references: [id])
+  productName    String
+  unitPriceCents Int
+  qty            Int
+
+  @@index([orderId])
+}
+
+// ── Conteúdo institucional (página "Sobre") ─────────────────
+
+model StoreStat {
+  id       Int    @id @default(autoincrement())
+  value    String
+  label    String
+  position Int
+}
+
+model TimelineEvent {
+  id       Int    @id @default(autoincrement())
+  year     String
+  title    String
+  text     String
+  position Int
+}
+
+model TeamMember {
+  id       Int    @id @default(autoincrement())
+  name     String
+  role     String
+  bio      String
+  imageUrl String
+  position Int
+}
+
+model StoreValue {
+  id       Int    @id @default(autoincrement())
+  icon     String
+  title    String
+  text     String
+  position Int
+}
