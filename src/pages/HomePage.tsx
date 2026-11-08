@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { Product } from "../types/product";
 import { useProducts } from "../hooks/useProducts";
+import { CardGridSkeleton, ErrorState } from "../components/feedback/LoadState";
 import { ProductCard } from "../components/products/ProductCard";
 import { ProductModal } from "../components/products/ProductModal";
 import { PromoStrip } from "../components/layout/PromoStrip";
@@ -12,8 +13,13 @@ interface HomePageProps {
 }
 
 export function HomePage({ onNavigate }: HomePageProps) {
-  const { products } = useProducts();
+  const { products, loading, error, refreshProducts } = useProducts();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+  const featuredProducts = useMemo(() => {
+    const featured = products.filter((p) => p.featured);
+    return featured.length > 0 ? featured : products.slice(0, 4);
+  }, [products]);
 
   const handleGoMenu = () => {
     if (onNavigate) {
@@ -72,15 +78,21 @@ export function HomePage({ onNavigate }: HomePageProps) {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onSelect={setSelectedProduct}
-            />
-          ))}
-        </div>
+        {error ? (
+          <ErrorState message={error} onRetry={refreshProducts} />
+        ) : loading ? (
+          <CardGridSkeleton count={4} />
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            {featuredProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onSelect={setSelectedProduct}
+              />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Promo strip */}

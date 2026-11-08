@@ -3,3 +3,4 @@ export * from "./MenuPage";
 export * from "./AboutPage";
 export * from "./LoginPage";
 export * from "./RegisterPage";
+export * from "./OrdersPage";

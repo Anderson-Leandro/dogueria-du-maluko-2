@@ -1,10 +1,14 @@
 import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router";
 import { User as UserIcon, Mail, Lock, Eye, EyeOff, MapPin, Home, Hash, CheckCircle } from "lucide-react";
+import { toast } from "sonner";
 import { AuthLayout } from "../components/auth/AuthLayout";
 import { Field } from "../components/auth/Field";
 import { useAuth } from "../hooks/useAuth";
 import { formatCep } from "../utils/masks";
-import { validateRegisterForm, FormErrors } from "../utils/validators";
+import { validateRegisterForm, FormErrors, toFormErrors } from "../utils/validators";
+
+const REGISTER_FIELDS = ["name", "email", "password", "confirmPassword", "zipCode", "street", "number"] as const;
 import { RegisterData } from "../types/user";
 
 interface RegisterPageProps {
@@ -13,6 +17,8 @@ interface RegisterPageProps {
 
 export function RegisterPage({ onNavigate }: RegisterPageProps) {
   const { register } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [form, setForm] = useState<RegisterData>({
     name: "",
     email: "",
@@ -52,9 +58,13 @@ export function RegisterPage({ onNavigate }: RegisterPageProps) {
     try {
       const res = await register(form);
       if (res.success) {
+        // O GuestRoute redireciona (para a rota de origem ou "/") assim que a sessão existe; o toast confirma o cadastro
+        toast.success(`Bem-vindo(a), ${form.name.trim().split(" ")[0]}! Sua conta foi criada.`);
         setSuccess(true);
       } else {
-        setErrors({ email: res.error || "Erro ao realizar cadastro." });
+        setErrors(
+          toFormErrors(res.fields, REGISTER_FIELDS, "email", res.error || "Erro ao realizar cadastro.")
+        );
       }
     } finally {
       setIsSubmitting(false);
@@ -67,11 +77,8 @@ export function RegisterPage({ onNavigate }: RegisterPageProps) {
     }
   };
 
-  const handleGoLogin = () => {
-    if (onNavigate) {
-      onNavigate("/login");
-    }
-  };
+  // Mantém o state (rota de origem) ao alternar entre login e cadastro
+  const handleGoLogin = () => navigate("/login", { state: location.state });
 
   if (success) {
     return (
@@ -217,6 +224,7 @@ export function RegisterPage({ onNavigate }: RegisterPageProps) {
                 icon={<Home className="w-4 h-4" />}
                 placeholder="Apto 4B, Bloco C (opcional)"
                 value={form.complement || ""}
+                maxLength={80}
                 onChange={setField("complement")}
               />
             </div>

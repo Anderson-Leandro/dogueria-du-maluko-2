@@ -6,10 +6,11 @@ import { ProductCard } from "../components/products/ProductCard";
 import { DrinkCard } from "../components/products/DrinkCard";
 import { ProductModal } from "../components/products/ProductModal";
 import { Footer } from "../components/layout/Footer";
+import { CardGridSkeleton, ErrorState } from "../components/feedback/LoadState";
 
 export function MenuPage() {
-  const { products } = useProducts();
-  const { drinks, categories } = useDrinks();
+  const { products, loading: productsLoading, error: productsError, refreshProducts } = useProducts();
+  const { drinks, categories, loading: drinksLoading, error: drinksError, refreshDrinks } = useDrinks();
   const [tab, setTab] = useState<"dogues" | "bebidas">("dogues");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
@@ -57,22 +58,30 @@ export function MenuPage() {
         {/* DOGUES Tab */}
         {tab === "dogues" && (
           <section className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-              {products.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  onSelect={setSelectedProduct}
-                />
-              ))}
-            </div>
+            {productsError ? (
+              <ErrorState message={productsError} onRetry={refreshProducts} />
+            ) : productsLoading ? (
+              <CardGridSkeleton count={8} />
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                {products.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onSelect={setSelectedProduct}
+                  />
+                ))}
+              </div>
+            )}
           </section>
         )}
 
         {/* BEBIDAS Tab */}
         {tab === "bebidas" && (
           <section className="max-w-7xl mx-auto px-4 sm:px-6 py-10 flex flex-col gap-10">
-            {categories.map((cat) => {
+            {drinksError && <ErrorState message={drinksError} onRetry={refreshDrinks} />}
+            {!drinksError && drinksLoading && <CardGridSkeleton count={8} imageHeight="h-36" />}
+            {!drinksError && !drinksLoading && categories.map((cat) => {
               const items = drinks.filter((d) => d.category === cat.key);
               if (items.length === 0) return null;
 

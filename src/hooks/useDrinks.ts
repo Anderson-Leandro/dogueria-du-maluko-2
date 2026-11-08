@@ -1,40 +1,27 @@
-import { useState, useEffect, useCallback } from "react";
 import { Drink, DrinkCategoryInfo } from "../types/drink";
 import { drinkService } from "../services/drinkService";
-import { mockDrinks, mockDrinkCategories } from "../data/drinks.data";
+import { useApiResource } from "./useApiResource";
+
+const EMPTY_DRINKS: Drink[] = [];
+const EMPTY_CATEGORIES: DrinkCategoryInfo[] = [];
 
 export function useDrinks() {
-  const [drinks, setDrinks] = useState<Drink[]>(mockDrinks);
-  const [categories, setCategories] = useState<DrinkCategoryInfo[]>(mockDrinkCategories);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchDrinks = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const [drinksData, categoriesData] = await Promise.all([
-        drinkService.getDrinks(),
-        drinkService.getCategories(),
+  const { data, loading, error, refresh } = useApiResource(
+    async (signal) => {
+      const [drinks, categories] = await Promise.all([
+        drinkService.getDrinks(signal),
+        drinkService.getCategories(signal),
       ]);
-      setDrinks(drinksData);
-      setCategories(categoriesData);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao carregar bebidas");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchDrinks();
-  }, [fetchDrinks]);
+      return { drinks, categories };
+    },
+    "Erro ao carregar bebidas"
+  );
 
   return {
-    drinks,
-    categories,
+    drinks: data?.drinks ?? EMPTY_DRINKS,
+    categories: data?.categories ?? EMPTY_CATEGORIES,
     loading,
     error,
-    refreshDrinks: fetchDrinks,
+    refreshDrinks: refresh,
   };
 }

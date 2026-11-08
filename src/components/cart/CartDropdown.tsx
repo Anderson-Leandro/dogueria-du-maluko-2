@@ -1,15 +1,21 @@
 import React, { useEffect } from "react";
-import { ShoppingBag, X, Plus, Minus, Trash2 } from "lucide-react";
+import { ShoppingBag, X, Plus, Minus, Trash2, Loader2 } from "lucide-react";
 import { useCart } from "../../hooks/useCart";
 import { formatPrice } from "../../utils/formatters";
+import { useSettings } from "../../hooks/useSettings";
 
 interface CartDropdownProps {
   onClose: () => void;
   onCheckout?: () => void;
+  /** Pedido sendo enviado: desabilita o botão de confirmar */
+  isSubmitting?: boolean;
 }
 
-export function CartDropdown({ onClose, onCheckout }: CartDropdownProps) {
-  const { items, cartTotal, removeFromCart, updateQty } = useCart();
+export function CartDropdown({ onClose, onCheckout, isSubmitting = false }: CartDropdownProps) {
+  const { items, cartCount, cartTotal, removeFromCart, updateQty } = useCart();
+  // Regra de frete vinda da API; o valor final é sempre calculado pelo backend
+  const { deliveryFee, freeDeliveryMin } = useSettings();
+  const freeDelivery = cartTotal >= freeDeliveryMin;
   const isEmpty = items.length === 0;
 
   // Bloqueio de scroll do body e suporte a tecla Escape
@@ -26,12 +32,6 @@ export function CartDropdown({ onClose, onCheckout }: CartDropdownProps) {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [onClose]);
-
-  const handleCheckoutClick = () => {
-    if (onCheckout) {
-      onCheckout();
-    }
-  };
 
   return (
     <>
@@ -58,7 +58,7 @@ export function CartDropdown({ onClose, onCheckout }: CartDropdownProps) {
             </span>
             {!isEmpty && (
               <span className="bg-primary/20 text-primary border border-primary/30 text-xs font-black px-2 py-0.5 rounded-full ml-1">
-                {items.reduce((acc, item) => acc + item.qty, 0)}
+                {cartCount}
               </span>
             )}
           </div>
@@ -150,20 +150,33 @@ export function CartDropdown({ onClose, onCheckout }: CartDropdownProps) {
 
         {/* Fixed footer — always visible on screen */}
         <div className="border-t border-white/10 px-4 sm:px-5 pt-3.5 pb-5 sm:pb-4 flex-shrink-0 bg-[#13132a]">
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-1">
             <span className="text-white/50 text-xs font-bold tracking-widest uppercase">
-              Total do pedido
+              Subtotal
             </span>
             <span className="font-black text-xl sm:text-2xl text-primary">
               {formatPrice(cartTotal)}
             </span>
           </div>
+          <p className={`text-[11px] font-semibold mb-3 ${freeDelivery ? "text-green-400" : "text-white/40"}`}>
+            {freeDelivery
+              ? "🚚 Frete grátis neste pedido!"
+              : `🚚 + frete de ${formatPrice(deliveryFee)} (grátis acima de ${formatPrice(freeDeliveryMin)})`}
+          </p>
           <button
-            disabled={isEmpty}
-            onClick={handleCheckoutClick}
+            disabled={isEmpty || isSubmitting || !onCheckout}
+            onClick={onCheckout}
+            aria-busy={isSubmitting}
             className="w-full bg-primary hover:bg-orange-400 disabled:bg-white/10 disabled:text-white/30 disabled:cursor-not-allowed text-white font-display text-lg sm:text-xl tracking-widest py-3 rounded-full transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg cursor-pointer flex items-center justify-center gap-2"
           >
-            CONFIRMAR COMPRA
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                ENVIANDO...
+              </>
+            ) : (
+              "CONFIRMAR COMPRA"
+            )}
           </button>
         </div>
       </div>

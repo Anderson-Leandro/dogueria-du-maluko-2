@@ -9,6 +9,7 @@ interface FieldProps {
   onChange: (value: string) => void;
   error?: string;
   rightSlot?: React.ReactNode;
+  maxLength?: number;
 }
 
 export function Field({
@@ -20,6 +21,7 @@ export function Field({
   onChange,
   error,
   rightSlot,
+  maxLength,
 }: FieldProps) {
   return (
     <div className="flex flex-col gap-1">
@@ -38,6 +40,7 @@ export function Field({
           type={type}
           placeholder={placeholder}
           value={value}
+          maxLength={maxLength}
           onChange={(e) => onChange(e.target.value)}
           className="flex-1 min-w-0 h-full bg-transparent text-white placeholder-white/30 text-sm outline-none font-body leading-none"
         />

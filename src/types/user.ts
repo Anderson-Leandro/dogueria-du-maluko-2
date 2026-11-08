@@ -24,10 +24,17 @@ export interface RegisterData {
   complement?: string;
 }
 
+export interface AuthActionResult {
+  success: boolean;
+  error?: string;
+  /** Erros por campo devolvidos pela API (mesmas chaves do formulário) */
+  fields?: Record<string, string>;
+}
+
 export interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (credentials: LoginCredentials) => Promise<{ success: boolean; error?: string }>;
-  register: (data: RegisterData) => Promise<{ success: boolean; error?: string }>;
+  login: (credentials: LoginCredentials) => Promise<AuthActionResult>;
+  register: (data: RegisterData) => Promise<AuthActionResult>;
   logout: () => void;
 }

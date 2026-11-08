@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { X, Home, UtensilsCrossed, Info, User, ChevronRight, LogIn } from "lucide-react";
+import { X, Home, UtensilsCrossed, Info, User, ChevronRight, LogIn, LogOut, Package } from "lucide-react";
 import logoComTexto from "../../imports/cachorro_e_texto_sem_fundo.png";
 import { useAuth } from "../../hooks/useAuth";
 
@@ -8,6 +8,8 @@ interface MobileNavDrawerProps {
   onClose: () => void;
   currentPath: string;
   onNavigate?: (path: string) => void;
+  /** Logout compartilhado com a header */
+  onLogout: () => void;
 }
 
 export function MobileNavDrawer({
@@ -15,6 +17,7 @@ export function MobileNavDrawer({
   onClose,
   currentPath,
   onNavigate,
+  onLogout,
 }: MobileNavDrawerProps) {
   const { isAuthenticated, user } = useAuth();
 
@@ -135,30 +138,60 @@ export function MobileNavDrawer({
         </div>
 
         {/* Drawer Footer / User section */}
-        <div className="p-4 border-t border-white/10 bg-[#141424]">
-          <button
-            onClick={() => handleLinkClick(isAuthenticated ? "/perfil" : "/login")}
-            className="flex items-center justify-between w-full p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/10 cursor-pointer"
-          >
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="w-9 h-9 rounded-full bg-primary/20 text-primary border border-primary/30 flex items-center justify-center flex-shrink-0">
-                <User className="w-4 h-4" />
+        <div className="p-4 border-t border-white/10 bg-[#141424] flex flex-col gap-2">
+          {isAuthenticated && (
+            <button
+              onClick={() => handleLinkClick("/meus-pedidos")}
+              className={`flex items-center justify-between w-full px-3 py-2.5 rounded-xl border transition-colors cursor-pointer ${
+                currentPath === "/meus-pedidos"
+                  ? "bg-primary text-white border-primary"
+                  : "bg-white/5 hover:bg-white/10 border-white/10 text-white/80"
+              }`}
+            >
+              <span className="flex items-center gap-2.5 text-xs font-bold tracking-widest">
+                <Package className={`w-4 h-4 ${currentPath === "/meus-pedidos" ? "text-white" : "text-primary"}`} />
+                MEUS PEDIDOS
+              </span>
+              <ChevronRight className="w-4 h-4 opacity-50" />
+            </button>
+          )}
+          {isAuthenticated ? (
+            <div className="flex items-center justify-between gap-3 w-full p-3 rounded-xl bg-white/5 border border-white/10">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-9 h-9 rounded-full bg-primary/20 text-primary border border-primary/30 flex items-center justify-center flex-shrink-0">
+                  <User className="w-4 h-4" />
+                </div>
+                <div className="text-left min-w-0">
+                  <p className="text-xs font-bold text-white truncate">{user?.name || "Minha Conta"}</p>
+                  <p className="text-[10px] text-white/50 truncate">{user?.email}</p>
+                </div>
               </div>
-              <div className="text-left min-w-0">
-                <p className="text-xs font-bold text-white truncate">
-                  {isAuthenticated ? user?.name || "Minha Conta" : "Entrar ou Cadastrar"}
-                </p>
-                <p className="text-[10px] text-white/50 truncate">
-                  {isAuthenticated ? user?.email || "Ver perfil" : "Acesse seus pedidos"}
-                </p>
-              </div>
+              <button
+                onClick={onLogout}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-[10px] font-bold tracking-widest text-white/80 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-colors cursor-pointer flex-shrink-0"
+                aria-label="Sair da conta"
+              >
+                <LogOut className="w-3.5 h-3.5 text-primary" />
+                SAIR
+              </button>
             </div>
-            {isAuthenticated ? (
-              <ChevronRight className="w-4 h-4 text-white/30" />
-            ) : (
+          ) : (
+            <button
+              onClick={() => handleLinkClick("/login")}
+              className="flex items-center justify-between w-full p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/10 cursor-pointer"
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-9 h-9 rounded-full bg-primary/20 text-primary border border-primary/30 flex items-center justify-center flex-shrink-0">
+                  <User className="w-4 h-4" />
+                </div>
+                <div className="text-left min-w-0">
+                  <p className="text-xs font-bold text-white truncate">Entrar ou Cadastrar</p>
+                  <p className="text-[10px] text-white/50 truncate">Acesse seus pedidos</p>
+                </div>
+              </div>
               <LogIn className="w-4 h-4 text-white/50" />
-            )}
-          </button>
+            </button>
+          )}
         </div>
       </div>
     </div>

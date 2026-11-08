@@ -1,22 +1,19 @@
 import { Product } from "../types/product";
-import { mockProducts } from "../data/products.data";
-import { simulateNetworkDelay } from "./api";
+import { apiFetch, ApiError } from "./api";
 
 export const productService = {
-  /**
-   * Obtém a lista completa de produtos (hot dogs)
-   */
-  async getProducts(): Promise<Product[]> {
-    await simulateNetworkDelay(200);
-    return [...mockProducts];
+  /** Lista os dogues ativos */
+  getProducts(signal?: AbortSignal): Promise<Product[]> {
+    return apiFetch<Product[]>("/products", { signal });
   },
 
-  /**
-   * Obtém um produto específico pelo ID
-   */
+  /** Obtém um dogue pelo ID (null se não existir) */
   async getProductById(id: number): Promise<Product | null> {
-    await simulateNetworkDelay(150);
-    const product = mockProducts.find((p) => p.id === id);
-    return product ? { ...product } : null;
+    try {
+      return await apiFetch<Product>(`/products/${id}`);
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 404) return null;
+      throw err;
+    }
   },
 };
