@@ -3,11 +3,18 @@
 # não recria o .env nem apaga o banco se já existirem.
 set -euo pipefail
 
-echo "📦 Instalando dependências do front-end..."
-npm ci
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
+echo "📦 Instalando dependências do front-end web (apps/web)..."
+npm ci --prefix "$ROOT/apps/web"
+
+if [ -f "$ROOT/apps/mobile/package-lock.json" ]; then
+  echo "📦 Instalando dependências do app mobile (apps/mobile)..."
+  npm ci --prefix "$ROOT/apps/mobile"
+fi
 
 echo "📦 Instalando dependências do backend..."
-cd backend
+cd "$ROOT/backend"
 npm ci
 
 if [ ! -f .env ]; then
@@ -31,5 +38,6 @@ fi
 echo ""
 echo "✅ Ambiente pronto! Abra dois terminais:"
 echo "   1) npm run dev:api     # API em :3333"
-echo "   2) npm run dev         # front em :5173 (abra pela aba Portas)"
+echo "   2) npm run dev         # front web em :5173 (abra pela aba Portas)"
+echo "   (opcional) npm run dev:mobile   # app mobile com Expo (veja o README)"
 echo "   Usuário demo: demo@maluko.com / 123456"
