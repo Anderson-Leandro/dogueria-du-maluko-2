@@ -7,6 +7,7 @@ import { Button } from "@/components/Button";
 import { EmptyState } from "@/components/LoadState";
 import { QtyStepper } from "@/components/QtyStepper";
 import { useToast } from "@/components/Toast";
+import { useSingleFlight } from "@/hooks";
 import { colors, fonts, radius, spacing } from "@/theme";
 
 /** Carrinho + confirmação do pedido (mesmas regras do web: preço e frete calculados pela API) */
@@ -16,12 +17,15 @@ export default function CartScreen() {
   const { deliveryFee, freeDeliveryMin } = useSettings();
   const toast = useToast();
   const [submitting, setSubmitting] = useState(false);
+  const singleFlight = useSingleFlight();
   const freeDelivery = cartTotal >= freeDeliveryMin;
 
   const goToLogin = () => router.push({ pathname: "/login", params: { redirect: "/carrinho" } });
 
-  const handleCheckout = async () => {
-    if (submitting || items.length === 0) return;
+  const handleCheckout = () => singleFlight(checkout);
+
+  const checkout = async () => {
+    if (items.length === 0) return;
     if (!isAuthenticated) {
       toast.show({ type: "info", title: "Entre na sua conta para confirmar o pedido." });
       goToLogin();

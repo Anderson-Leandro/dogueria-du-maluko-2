@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { router } from "expo-router";
 import { ChevronRight } from "lucide-react-native";
-import { Product, useProducts } from "@dogueria/core";
+import { Product, formatPrice, useProducts, useSettings } from "@dogueria/core";
 import { Button } from "@/components/Button";
 import { ProductCard } from "@/components/ProductCard";
 import { ErrorState, SkeletonList } from "@/components/LoadState";
@@ -18,6 +18,7 @@ const PERKS = [
 /** Início: hero, dogues mais pedidos (featured) e diferenciais — igual à Home do web */
 export default function HomeScreen() {
   const { products, loading, error, refreshProducts } = useProducts();
+  const { freeDeliveryMin } = useSettings();
 
   const featured = useMemo(() => {
     const list = products.filter((p) => p.featured);
@@ -35,7 +36,7 @@ export default function HomeScreen() {
         <Text style={[styles.heroSub, { color: colors.accent }]}>DE RIBEIRÃO PIRES!</Text>
         <Button label="PEÇA JÁ SEU DOGUE!" size="lg" onPress={() => router.navigate("/cardapio")} style={{ marginTop: spacing.xl }} />
         <View style={styles.freeShipping}>
-          <Text style={styles.freeShippingText}>🚚 Entrega grátis acima de R$60,00</Text>
+          <Text style={styles.freeShippingText}>🚚 Entrega grátis acima de {formatPrice(freeDeliveryMin)}</Text>
         </View>
       </View>
 

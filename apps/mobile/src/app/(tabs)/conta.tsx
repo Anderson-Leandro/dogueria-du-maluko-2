@@ -67,7 +67,8 @@ export default function AccountScreen() {
         )}
       </View>
 
-      <Text style={styles.apiInfo}>API: {API_URL}</Text>
+      {/* Diagnóstico de conexão: só em desenvolvimento */}
+      {__DEV__ ? <Text style={styles.apiInfo}>API: {API_URL}</Text> : null}
     </ScrollView>
   );
 }

@@ -29,7 +29,8 @@ export default function ProductScreen() {
       title: `${qty}x ${product.name} no carrinho`,
       action: { label: "Ver carrinho", onPress: () => router.navigate("/carrinho") },
     });
-    router.back();
+    if (router.canGoBack()) router.back();
+    else router.replace("/cardapio"); // aberto por link direto: não há tela anterior
   };
 
   return (

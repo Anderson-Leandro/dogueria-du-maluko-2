@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Redirect, router, useLocalSearchParams } from "expo-router";
-import { Eye, EyeOff, Lock, Mail } from "lucide-react-native";
+import { Lock, Mail } from "lucide-react-native";
 import { FormErrors, toFormErrors, useAuth, validateLoginForm } from "@dogueria/core";
 import { Button } from "@/components/Button";
 import { Field } from "@/components/Field";
+import { PasswordToggle } from "@/components/PasswordToggle";
 import { useToast } from "@/components/Toast";
+import { useSingleFlight } from "@/hooks";
 import { leaveAuthFlow, safeRedirect } from "@/lib/navigation";
 import { colors, fonts, spacing } from "@/theme";
 
@@ -20,11 +22,14 @@ export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitting, setSubmitting] = useState(false);
+  const singleFlight = useSingleFlight();
 
-  // Já logado (ex.: link direto): não faz sentido mostrar o login
-  if (isAuthenticated && !submitting) return <Redirect href="/" />;
+  // Já logado (ex.: link direto): vai para o destino pedido ou para o Início
+  if (isAuthenticated && !submitting) return <Redirect href={(redirect ?? "/") as never} />;
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => singleFlight(submit);
+
+  const submit = async () => {
     const validation = validateLoginForm({ email, password });
     if (Object.keys(validation).length > 0) {
       setErrors(validation);
@@ -72,16 +77,7 @@ export default function LoginScreen() {
             autoComplete="password"
             icon={<Lock size={18} color="rgba(255,255,255,0.4)" />}
             onSubmitEditing={handleSubmit}
-            rightSlot={
-              <Pressable
-                onPress={() => setShowPassword((v) => !v)}
-                accessibilityRole="button"
-                accessibilityLabel={showPassword ? "Ocultar senha" : "Mostrar senha"}
-                hitSlop={8}
-              >
-                {showPassword ? <EyeOff size={18} color="rgba(255,255,255,0.5)" /> : <Eye size={18} color="rgba(255,255,255,0.5)" />}
-              </Pressable>
-            }
+            rightSlot={<PasswordToggle visible={showPassword} onToggle={() => setShowPassword((v) => !v)} />}
           />
           <Button label="ENTRAR" size="lg" loading={submitting} onPress={handleSubmit} testID="entrar" />
         </View>

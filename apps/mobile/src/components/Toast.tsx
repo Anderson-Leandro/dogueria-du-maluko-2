@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, fonts, radius, spacing } from "@/theme";
@@ -53,8 +53,9 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       setToast({ ...options, key });
       timer.current = setTimeout(() => hide(key), options.action ? 5000 : 3500);
     },
-    [hide, translateY]
+    [hide]
   );
+  const value = useMemo(() => ({ show }), [show]);
 
   // Animação de entrada só depois de renderizar o aviso novo. A view não é remontada
   // (sem `key`): desmontar uma Animated.View interrompe as animações do valor compartilhado.
@@ -71,7 +72,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <ToastContext.Provider value={{ show }}>
+    <ToastContext.Provider value={value}>
       {children}
       {toast && (
         <Animated.View

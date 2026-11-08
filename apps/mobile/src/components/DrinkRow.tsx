@@ -1,23 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
-import { Drink, formatPrice, useCart } from "@dogueria/core";
+import { Drink, formatPrice } from "@dogueria/core";
+import { useJustAdded } from "@/hooks";
 import { colors, fonts, radius, spacing } from "@/theme";
 
 /** Linha de bebida: imagem à esquerda, nome/descrição, preço e botão de adicionar */
 export function DrinkRow({ drink }: { drink: Drink }) {
-  const { addToCart } = useCart();
-  const [justAdded, setJustAdded] = useState(false);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => () => {
-    if (timer.current) clearTimeout(timer.current);
-  }, []);
-
-  const handleAdd = () => {
-    addToCart(drink, 1);
-    setJustAdded(true);
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(() => setJustAdded(false), 1500);
-  };
+  const { justAdded, handleAdd } = useJustAdded(drink);
 
   return (
     <View style={styles.row}>

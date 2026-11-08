@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
-import { Product, formatPrice, useCart } from "@dogueria/core";
+import { Product, formatPrice } from "@dogueria/core";
+import { useJustAdded } from "@/hooks";
 import { colors, fonts, radius, spacing } from "@/theme";
 
 interface ProductCardProps {
@@ -10,19 +11,7 @@ interface ProductCardProps {
 
 /** Card de dogue (imagem, selo, descrição, preço e "+ CARRINHO") */
 export function ProductCard({ product, onPress }: ProductCardProps) {
-  const { addToCart } = useCart();
-  const [justAdded, setJustAdded] = useState(false);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => () => {
-    if (timer.current) clearTimeout(timer.current);
-  }, []);
-
-  const handleAdd = () => {
-    addToCart(product, 1);
-    setJustAdded(true);
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(() => setJustAdded(false), 1500);
-  };
+  const { justAdded, handleAdd } = useJustAdded(product);
 
   return (
     <View style={styles.card}>

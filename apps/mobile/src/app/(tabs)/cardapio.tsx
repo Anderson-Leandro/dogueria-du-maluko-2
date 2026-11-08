@@ -31,7 +31,7 @@ export default function MenuScreen() {
         {(
           [
             { id: "dogues", label: "🌭  DOGUES", count: products.length },
-            { id: "bebidas", label: "🥤  BEBIDAS", count: drinks.length },
+            { id: "bebidas", label: "🥤  BEBIDAS", count: sections.reduce((n, s) => n + s.data.length, 0) },
           ] as const
         ).map((t) => {
           const active = tab === t.id;

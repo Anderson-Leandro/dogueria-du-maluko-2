@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Redirect, router, useLocalSearchParams } from "expo-router";
-import { Eye, EyeOff, Hash, Home, Lock, Mail, MapPin, User } from "lucide-react-native";
+import { Hash, Home, Lock, Mail, MapPin, User } from "lucide-react-native";
 import { FormErrors, RegisterData, formatCep, toFormErrors, useAuth, validateRegisterForm } from "@dogueria/core";
 import { Button } from "@/components/Button";
 import { Field } from "@/components/Field";
+import { PasswordToggle } from "@/components/PasswordToggle";
 import { useToast } from "@/components/Toast";
+import { useSingleFlight } from "@/hooks";
 import { leaveAuthFlow, safeRedirect } from "@/lib/navigation";
 import { colors, fonts, spacing } from "@/theme";
 
@@ -31,12 +33,16 @@ export default function RegisterScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitting, setSubmitting] = useState(false);
+  const singleFlight = useSingleFlight();
 
-  if (isAuthenticated && !submitting) return <Redirect href="/" />;
+  // Já logado (ex.: link direto): vai para o destino pedido ou para o Início
+  if (isAuthenticated && !submitting) return <Redirect href={(redirect ?? "/") as never} />;
 
   const set = (key: keyof RegisterData) => (value: string) => setForm((prev) => ({ ...prev, [key]: value }));
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => singleFlight(submit);
+
+  const submit = async () => {
     const validation = validateRegisterForm(form);
     if (Object.keys(validation).length > 0) {
       setErrors(validation);
@@ -56,16 +62,7 @@ export default function RegisterScreen() {
     }
   };
 
-  const passwordToggle = (
-    <Pressable
-      onPress={() => setShowPassword((v) => !v)}
-      accessibilityRole="button"
-      accessibilityLabel={showPassword ? "Ocultar senha" : "Mostrar senha"}
-      hitSlop={8}
-    >
-      {showPassword ? <EyeOff size={18} color="rgba(255,255,255,0.5)" /> : <Eye size={18} color="rgba(255,255,255,0.5)" />}
-    </Pressable>
-  );
+  const passwordToggle = <PasswordToggle visible={showPassword} onToggle={() => setShowPassword((v) => !v)} />;
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
@@ -99,7 +96,8 @@ export default function RegisterScreen() {
           <Text
             style={styles.link}
             accessibilityRole="link"
-            onPress={() => (router.canGoBack() ? router.back() : router.replace({ pathname: "/login", params: redirect ? { redirect } : {} }))}
+            // Volta ao login se ele estiver na pilha; senão abre o login no lugar desta tela
+            onPress={() => router.dismissTo({ pathname: "/login", params: redirect ? { redirect } : {} })}
           >
             Entrar
           </Text>
