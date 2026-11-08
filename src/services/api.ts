@@ -2,7 +2,11 @@
  * Cliente HTTP base para a API da Dogueria Du Maluko (backend/).
  */
 
-export const API_BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:3333/api").replace(/\/+$/, "");
+/**
+ * Padrão "/api": mesma origem do front, repassada ao backend pelo proxy do Vite
+ * (vite.config.ts). Use VITE_API_URL apenas para apontar para uma API externa.
+ */
+export const API_BASE_URL = (import.meta.env.VITE_API_URL || "/api").replace(/\/+$/, "");
 
 const AUTH_STORAGE_KEY = "maluko_auth";
 

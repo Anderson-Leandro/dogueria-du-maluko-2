@@ -6,7 +6,8 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "dev:api": "npm --prefix backend run dev"
   },
   "dependencies": {
     "@emotion/react": "11.14.0",
