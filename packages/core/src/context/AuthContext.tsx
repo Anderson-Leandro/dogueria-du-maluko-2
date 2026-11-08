@@ -31,10 +31,14 @@ export function AuthProvider({ children, onSessionExpired }: AuthProviderProps) 
     (async () => {
       let current = initialUser;
       if (current === undefined) {
-        current = await authService.restoreSession();
+        try {
+          current = await authService.restoreSession();
+        } finally {
+          // Sempre libera o app, mesmo se a leitura falhar ou um login acontecer no meio
+          if (!cancelled) setIsReady(true);
+        }
         if (isStale()) return;
         setUser(current);
-        setIsReady(true);
       }
       if (!current) return;
 

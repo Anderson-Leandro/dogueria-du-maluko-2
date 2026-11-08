@@ -14,6 +14,17 @@ function parseItems(raw: string | null): CartItem[] {
   }
 }
 
+/** Soma quantidades de itens repetidos (carrinho salvo + itens adicionados antes de carregar) */
+function mergeItems(saved: CartItem[], current: CartItem[]): CartItem[] {
+  const merged = saved.map((item) => ({ ...item }));
+  for (const item of current) {
+    const existing = merged.find((i) => i.id === item.id);
+    if (existing) existing.qty += item.qty;
+    else merged.push(item);
+  }
+  return merged;
+}
+
 /** Itens salvos, sem esperar; `undefined` se o storage for assíncrono */
 function peekSavedItems(): CartItem[] | undefined {
   try {
@@ -40,8 +51,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     let active = true;
     Promise.resolve(getCoreConfig().storage.getItem(CART_STORAGE_KEY))
       .then((raw) => {
-        // Se algo foi adicionado antes da leitura terminar, mantém o que já está na tela
-        if (active) setItems((current) => (current.length > 0 ? current : parseItems(raw)));
+        // Junta o carrinho salvo com o que foi adicionado antes da leitura terminar
+        if (active) setItems((current) => mergeItems(parseItems(raw), current));
       })
       .catch(() => undefined)
       .finally(() => {

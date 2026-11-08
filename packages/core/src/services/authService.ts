@@ -1,6 +1,6 @@
 import { User, LoginCredentials, RegisterData } from "../types/user";
 import { apiFetch, ApiError, getErrorMessage } from "./api";
-import { clearSession, loadSession, peekSession, saveSession, StoredSession } from "./session";
+import { clearSession, getSessionToken, loadSession, peekSession, saveSession, StoredSession } from "./session";
 
 export interface AuthResult {
   success: boolean;
@@ -47,11 +47,6 @@ export const authService = {
     return session === undefined ? undefined : (session?.user ?? null);
   },
 
-  /** Usuário salvo localmente (null se não houver ou se ainda não carregado) */
-  getCurrentUser(): User | null {
-    return peekSession()?.user ?? null;
-  },
-
   /** Carrega a sessão salva (assíncrono no mobile) */
   async restoreSession(): Promise<User | null> {
     return (await loadSession())?.user ?? null;
@@ -59,9 +54,13 @@ export const authService = {
 
   /** Valida o token salvo no servidor e retorna o usuário atualizado */
   async me(): Promise<User> {
+    const sentToken = (await loadSession())?.token;
     const user = await apiFetch<User>("/auth/me", { auth: true });
+    // Só atualiza se a sessão ainda for a mesma (evita gravar o perfil antigo junto a um novo login)
     const session = peekSession();
-    if (session) saveSession({ ...session, user });
+    if (session && sentToken && session.token === sentToken && getSessionToken() === sentToken) {
+      saveSession({ ...session, user });
+    }
     return user;
   },
 

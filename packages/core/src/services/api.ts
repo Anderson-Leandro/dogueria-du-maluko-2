@@ -3,7 +3,7 @@
  * A URL base e o storage vêm de configureCore() (cada plataforma define os seus).
  */
 import { getCoreConfig } from "../config";
-import { AUTH_STORAGE_KEY, getSessionToken } from "./session";
+import { AUTH_STORAGE_KEY, getSessionToken, loadSession } from "./session";
 
 /** URL base configurada para a API */
 export function getApiBaseUrl(): string {
@@ -20,11 +20,6 @@ export class ApiError extends Error {
     super(message);
     this.name = "ApiError";
   }
-}
-
-/** Token JWT da sessão atual (se houver) */
-export function getStoredToken(): string | null {
-  return getSessionToken();
 }
 
 export { AUTH_STORAGE_KEY };
@@ -56,7 +51,8 @@ interface ApiFetchOptions {
 export async function apiFetch<T>(path: string, { method = "GET", body, auth = false, signal }: ApiFetchOptions = {}): Promise<T> {
   const headers: Record<string, string> = { Accept: "application/json" };
   if (body !== undefined) headers["Content-Type"] = "application/json";
-  const sentToken = auth ? getStoredToken() : null;
+  // No mobile a sessão é lida de forma assíncrona: espera carregar antes de enviar o token
+  const sentToken = auth ? ((await loadSession())?.token ?? null) : null;
   if (sentToken) headers.Authorization = `Bearer ${sentToken}`;
 
   let response: Response;
@@ -81,7 +77,7 @@ export async function apiFetch<T>(path: string, { method = "GET", body, auth = f
 
   // Só derruba a sessão se o token rejeitado ainda for o atual
   // (evita que uma resposta antiga encerre um login feito depois)
-  if (response.status === 401 && sentToken && sentToken === getStoredToken()) {
+  if (response.status === 401 && sentToken && sentToken === getSessionToken()) {
     unauthorizedHandler?.();
   }
 

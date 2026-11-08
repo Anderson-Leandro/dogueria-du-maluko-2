@@ -8,12 +8,6 @@ export interface StoredSession {
   user: User;
 }
 
-/**
- * Sessão em memória, espelhada no storage da plataforma.
- * `undefined` = ainda não carregada; `null` = sem sessão.
- */
-let cache: StoredSession | null | undefined;
-
 function parse(raw: string | null): StoredSession | null {
   if (!raw) return null;
   try {
@@ -24,46 +18,69 @@ function parse(raw: string | null): StoredSession | null {
   }
 }
 
-/**
- * Lê a sessão sem esperar: com storage síncrono (web) retorna o valor na hora;
- * com storage assíncrono ainda não carregado retorna `undefined`.
+/*
+ * Dois modos, conforme o storage da plataforma:
+ * - Síncrono (web/localStorage): SEM cache — toda leitura vai ao storage, então
+ *   login/logout feitos em outra aba valem imediatamente nesta.
+ * - Assíncrono (mobile): a sessão é lida uma vez (loadSession) e mantida em memória.
+ *   `undefined` = ainda não carregada; `null` = sem sessão.
  */
-export function peekSession(): StoredSession | null | undefined {
-  if (cache !== undefined) return cache;
-  try {
-    const raw = getCoreConfig().storage.getItem(AUTH_STORAGE_KEY);
-    if (isPromise(raw)) return undefined;
-    cache = parse(raw);
-  } catch {
-    cache = null;
-  }
-  return cache;
+let asyncStorage: boolean | undefined;
+let cache: StoredSession | null | undefined;
+let loading: Promise<StoredSession | null> | null = null;
+
+function startAsyncLoad(pending: Promise<string | null>): Promise<StoredSession | null> {
+  loading = pending
+    .then((raw) => parse(raw))
+    .catch(() => null)
+    .then((session) => {
+      // Um login/logout feito enquanto a leitura acontecia tem prioridade
+      if (cache === undefined) cache = session;
+      return cache ?? null;
+    });
+  return loading;
 }
 
-/** Carrega a sessão do storage (necessário no mobile, onde a leitura é assíncrona) */
+/**
+ * Lê a sessão sem esperar. Com storage síncrono retorna o valor atual do storage;
+ * com storage assíncrono retorna o que já está em memória ou `undefined` se ainda não carregou.
+ */
+export function peekSession(): StoredSession | null | undefined {
+  if (asyncStorage) return cache;
+  let raw: string | null | Promise<string | null>;
+  try {
+    raw = getCoreConfig().storage.getItem(AUTH_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+  if (isPromise(raw)) {
+    // Primeira leitura revelou storage assíncrono: aproveita a própria leitura como carga
+    asyncStorage = true;
+    if (!loading) startAsyncLoad(raw);
+    return cache;
+  }
+  asyncStorage = false;
+  return parse(raw);
+}
+
+/** Garante a sessão carregada (necessário no mobile, onde a leitura é assíncrona) */
 export async function loadSession(): Promise<StoredSession | null> {
   const peeked = peekSession();
   if (peeked !== undefined) return peeked;
-  try {
-    const raw = await getCoreConfig().storage.getItem(AUTH_STORAGE_KEY);
-    // Um login feito enquanto a leitura acontecia tem prioridade
-    if (cache === undefined) cache = parse(raw);
-  } catch {
-    if (cache === undefined) cache = null;
-  }
-  return cache ?? null;
+  return loading ?? startAsyncLoad(Promise.resolve(getCoreConfig().storage.getItem(AUTH_STORAGE_KEY)));
 }
 
+/** Token atual sem esperar (null se não houver ou se ainda não carregou) */
 export function getSessionToken(): string | null {
   return peekSession()?.token ?? null;
 }
 
 export function saveSession(session: StoredSession): void {
-  cache = session;
+  if (asyncStorage !== false) cache = session;
   safeStorageWrite(() => getCoreConfig().storage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session)));
 }
 
 export function clearSession(): void {
-  cache = null;
+  if (asyncStorage !== false) cache = null;
   safeStorageWrite(() => getCoreConfig().storage.removeItem(AUTH_STORAGE_KEY));
 }
