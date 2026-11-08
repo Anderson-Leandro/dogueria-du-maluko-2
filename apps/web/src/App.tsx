@@ -12,6 +12,10 @@ import { OrdersPage } from "./pages/OrdersPage";
 import { GuestRoute } from "./components/routing/GuestRoute";
 import { PrivateRoute } from "./components/routing/PrivateRoute";
 import { Toaster } from "./components/ui/sonner";
+import { toast } from "sonner";
+
+const handleSessionExpired = () =>
+  toast.error("Sua sessão expirou. Entre novamente.", { id: "session-expired" });
 
 function AppLayout() {
   const navigate = useNavigate();
@@ -41,7 +45,7 @@ function AppLayout() {
 
 export default function App() {
   return (
-    <AuthProvider>
+    <AuthProvider onSessionExpired={handleSessionExpired}>
       <CartProvider>
         <BrowserRouter>
           <AppLayout />

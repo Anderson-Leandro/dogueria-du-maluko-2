@@ -1,7 +1,2 @@
-export * from "./api";
-export * from "./productService";
-export * from "./drinkService";
-export * from "./aboutService";
-export * from "./authService";
-export * from "./orderService";
-export * from "./settingsService";
+// Re-export: o código vive em packages/core (compartilhado com o app mobile)
+export * from "@dogueria/core/services/index";

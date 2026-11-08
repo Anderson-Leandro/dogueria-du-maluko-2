@@ -28,7 +28,11 @@ export default defineConfig({
     alias: {
       // Alias @ to the src directory
       '@': path.resolve(__dirname, './src'),
+      // Código compartilhado com o app mobile (fonte TypeScript, sem build)
+      '@dogueria/core': path.resolve(__dirname, '../../packages/core/src'),
     },
+    // O core não tem node_modules próprio: garante uma única cópia do React (a deste app)
+    dedupe: ['react', 'react-dom'],
   },
 
   // File types to support raw imports. Never add .css, .tsx, or .ts files to this.
@@ -43,6 +47,8 @@ export default defineConfig({
     host: process.env.CODESPACES === 'true' ? true : undefined,
     // Domínios de port forwarding do GitHub Codespaces (o Vite 6 bloqueia hosts desconhecidos)
     allowedHosts: ['.app.github.dev'],
+    // Permite servir arquivos de packages/core (fora da pasta deste app)
+    fs: { allow: ['.', path.resolve(__dirname, '../../packages/core')] },
     // O front chama "/api" (mesma origem) e o Vite repassa para o backend.
     // Assim funciona localmente e no Codespaces sem CORS e sem expor a porta 3333.
     proxy: {

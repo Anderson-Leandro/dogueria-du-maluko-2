@@ -1,5 +1,2 @@
-/** Regras públicas da loja expostas por GET /settings */
-export interface StoreSettings {
-  deliveryFee: number;
-  freeDeliveryMin: number;
-}
+// Re-export: o código vive em packages/core (compartilhado com o app mobile)
+export * from "@dogueria/core/types/settings";

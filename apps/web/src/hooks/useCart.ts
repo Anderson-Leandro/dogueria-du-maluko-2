@@ -1,8 +1,2 @@
-import { useCartContext } from "../context/CartContext";
-
-/**
- * Hook de acesso ao estado global e ações do carrinho de compras
- */
-export function useCart() {
-  return useCartContext();
-}
+// Re-export: o código vive em packages/core (compartilhado com o app mobile)
+export * from "@dogueria/core/hooks/useCart";

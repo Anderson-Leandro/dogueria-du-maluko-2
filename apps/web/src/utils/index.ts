@@ -1,3 +1,2 @@
-export * from "./formatters";
-export * from "./masks";
-export * from "./validators";
+// Re-export: o código vive em packages/core (compartilhado com o app mobile)
+export * from "@dogueria/core/utils/index";

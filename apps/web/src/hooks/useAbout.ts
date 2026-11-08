@@ -1,16 +1,2 @@
-import { aboutService } from "../services/aboutService";
-import { useApiResource } from "./useApiResource";
-
-export function useAbout() {
-  const { data, loading, error, refresh } = useApiResource(
-    (signal) => aboutService.getAboutData(signal),
-    "Erro ao carregar dados institucionais"
-  );
-
-  return {
-    aboutData: data,
-    loading,
-    error,
-    refreshAboutData: refresh,
-  };
-}
+// Re-export: o código vive em packages/core (compartilhado com o app mobile)
+export * from "@dogueria/core/hooks/useAbout";

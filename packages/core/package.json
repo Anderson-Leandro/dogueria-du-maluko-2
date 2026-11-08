@@ -1,0 +1,12 @@
+{
+  "name": "@dogueria/core",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Código compartilhado entre o web e o mobile: tipos, serviços da API, hooks, contexts e utilitários",
+  "license": "MIT",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "peerDependencies": {
+    "react": ">=18.3"
+  }
+}

@@ -1,7 +1,2 @@
-export * from "./product";
-export * from "./drink";
-export * from "./cart";
-export * from "./user";
-export * from "./about";
-export * from "./order";
-export * from "./settings";
+// Re-export: o código vive em packages/core (compartilhado com o app mobile)
+export * from "@dogueria/core/types/index";

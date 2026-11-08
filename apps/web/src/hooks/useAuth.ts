@@ -1,8 +1,2 @@
-import { useAuthContext } from "../context/AuthContext";
-
-/**
- * Hook de acesso ao estado global de autenticação e ações de login/cadastro/logout
- */
-export function useAuth() {
-  return useAuthContext();
-}
+// Re-export: o código vive em packages/core (compartilhado com o app mobile)
+export * from "@dogueria/core/hooks/useAuth";
