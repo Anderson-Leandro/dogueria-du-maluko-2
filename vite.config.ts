@@ -33,4 +33,23 @@ export default defineConfig({
 
   // File types to support raw imports. Never add .css, .tsx, or .ts files to this.
   assetsInclude: ['**/*.svg', '**/*.csv'],
+
+  server: {
+    port: 5173,
+    // Porta fixa: o devcontainer encaminha a 5173; se estiver ocupada, falha em vez de trocar
+    strictPort: true,
+    // No Codespaces (CODESPACES=true) escuta em todas as interfaces para o port forwarding
+    // alcançar o servidor; localmente mantém o padrão (apenas localhost).
+    host: process.env.CODESPACES === 'true' ? true : undefined,
+    // Domínios de port forwarding do GitHub Codespaces (o Vite 6 bloqueia hosts desconhecidos)
+    allowedHosts: ['.app.github.dev'],
+    // O front chama "/api" (mesma origem) e o Vite repassa para o backend.
+    // Assim funciona localmente e no Codespaces sem CORS e sem expor a porta 3333.
+    proxy: {
+      '/api': {
+        target: process.env.API_PROXY_TARGET || 'http://localhost:3333',
+        changeOrigin: true,
+      },
+    },
+  },
 })

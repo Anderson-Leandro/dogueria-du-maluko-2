@@ -1,0 +1,23 @@
+{
+  "name": "Dogueria Du Maluko",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-20-bookworm",
+
+  // Instala dependências, cria o backend/.env com um JWT_SECRET aleatório e prepara o banco
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+
+  // Só a porta do front precisa ser aberta no navegador: o Vite repassa /api para a 3333
+  "forwardPorts": [5173, 3333],
+  "portsAttributes": {
+    "5173": { "label": "Front-end (Vite)", "onAutoForward": "openBrowser" },
+    "3333": { "label": "API (Express)", "onAutoForward": "silent" }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": ["Prisma.prisma", "bradlc.vscode-tailwindcss", "dbaeumer.vscode-eslint"]
+    },
+    "codespaces": {
+      "openFiles": ["README.md"]
+    }
+  }
+}

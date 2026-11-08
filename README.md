@@ -186,9 +186,27 @@ Em outro terminal, na raiz do projeto:
 
 ```bash
 npm install
-cp .env.example .env          # opcional: VITE_API_URL (padrão http://localhost:3333/api)
 npm run dev                   # http://localhost:5173
 ```
+
+O front chama a API pelo caminho relativo `/api`, e o **proxy do Vite** (`vite.config.ts`) repassa essas chamadas para `http://localhost:3333`. Por isso não é preciso configurar URL nem CORS. Para usar uma API em outro endereço, defina `VITE_API_URL` num `.env` (veja `.env.example`).
+
+### ☁️ Rodando no GitHub Codespaces
+
+O repositório inclui um **devcontainer** (`.devcontainer/`) que prepara tudo automaticamente:
+
+1. No GitHub, clique em **Code → Codespaces → Create codespace** nesta branch.
+2. Aguarde a criação. O script `.devcontainer/setup.sh` instala as dependências, cria o `backend/.env` com um `JWT_SECRET` aleatório e cria e popula o banco.
+3. Abra **dois terminais**:
+   ```bash
+   npm run dev:api     # terminal 1: API na porta 3333
+   npm run dev         # terminal 2: front na porta 5173
+   ```
+4. Abra a porta **5173** pela aba **Portas** (ou pela notificação que aparece).
+
+Como o navegador fala só com a porta 5173 e o Vite repassa `/api` internamente para a API, **a porta 3333 não precisa ser pública** e não há problemas de CORS.
+
+> Se o setup automático não tiver rodado, execute `bash .devcontainer/setup.sh` manualmente. Ele pode ser rodado de novo com segurança: não recria o `.env` nem apaga o banco existente.
 
 ---
 
@@ -198,7 +216,8 @@ npm run dev                   # http://localhost:5173
 
 | Comando | Descrição |
 |---|---|
-| `npm run dev` | Servidor de desenvolvimento Vite |
+| `npm run dev` | Servidor de desenvolvimento Vite (com proxy de `/api` para a API) |
+| `npm run dev:api` | Atalho para subir a API (`backend/`) a partir da raiz |
 | `npm run build` | Build de produção |
 | `npm run typecheck` | Verificação de tipos (TypeScript) |
 
