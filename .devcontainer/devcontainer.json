@@ -1,6 +1,6 @@
 {
   "name": "Dogueria Du Maluko",
-  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-20-bookworm",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
 
   // Instala dependências, cria o backend/.env com um JWT_SECRET aleatório e prepara o banco
   "postCreateCommand": "bash .devcontainer/setup.sh",

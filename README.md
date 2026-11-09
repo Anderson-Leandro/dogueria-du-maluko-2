@@ -165,7 +165,7 @@ Base: `http://localhost:3333/api`. Erros seguem o formato `{ "error": "mensagem"
 ## 🚀 Como Executar o Projeto
 
 ### Pré-requisitos
-- **Node.js** 20 ou superior e **npm**
+- **Node.js** 22.13 ou superior e **npm** (o app mobile, com Expo SDK 58, exige Node 22.13+; o web e a API rodam a partir do Node 20)
 - Para o celular: o app **Expo Go** (Android ou iOS), na mesma rede Wi-Fi do computador
 
 ### 1. Instalar as dependências
