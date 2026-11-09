@@ -243,15 +243,21 @@ O repositório inclui um **devcontainer** (`.devcontainer/`) que prepara tudo au
 
 No web, o navegador fala só com a porta 5173 e o Vite repassa `/api` internamente para a API, então **a porta 3333 não precisa ser pública**.
 
-**App mobile no Codespaces.** O celular não está na rede do Codespace, então:
+**App mobile no Codespaces (celular com Expo Go).** O celular não está na rede do Codespace, então ele precisa alcançar a **API** e o **Metro** (servidor do Expo) pela internet:
 
-1. Deixe a porta **3333** pública: na aba **Portas**, clique com o botão direito em 3333 → **Port Visibility → Public**. Também dá para usar o terminal: `gh codespace ports visibility 3333:public -c $CODESPACE_NAME`. O app já aponta automaticamente para a URL pública da API do Codespace.
-2. Suba o Expo com túnel e escaneie o QR code com o Expo Go:
+1. **API pública.** Com a API rodando (`npm run dev:api`), deixe a porta **3333** pública: na aba **Portas**, clique com o botão direito em 3333 → **Port Visibility → Public**. Pelo terminal: `gh codespace ports visibility 3333:public -c $CODESPACE_NAME`.
+   - Para conferir, abra `https://<nome-do-codespace>-3333.app.github.dev/api/health` no navegador do **celular**: deve aparecer `{"status":"ok"}`. Se aparecer a tela de login do GitHub, a porta ainda está privada.
+   - O app já aponta sozinho para essa URL quando o Expo roda no Codespace (`apps/mobile/app.config.js`). A URL em uso aparece no rodapé da aba **Conta**.
+2. **Metro via túnel.** Em outro terminal:
    ```bash
    npm run dev:mobile:tunnel
    ```
-   Na primeira vez, o Expo pode pedir para instalar o `@expo/ngrok`; confirme.
-3. Para mostrar o app no próprio navegador do Codespace: `npm run dev:mobile:web` e abra a porta **8081**. Mesmo assim, a porta 3333 precisa estar pública.
+   O túnel usa o **ngrok** (`@expo/ngrok`), que o `setup.sh` instala globalmente ao criar o Codespace. Em um Codespace criado antes dessa mudança, instale uma vez: `npm i -g @expo/ngrok`.
+3. **Abrir no Expo Go.** Escaneie o QR code. Se ele não for lido, gere a imagem com `npm run mobile:qr -- <URL exp://… exibida pelo Expo>`, ou digite a URL em **"Enter URL manually"**.
+   - **iPhone:** o Expo Go só abre o projeto se o terminal e o app estiverem logados na **mesma conta Expo**. Rode `npx expo login` no terminal do Codespace e entre na mesma conta no Expo Go.
+4. **Navegador.** Para mostrar o app no navegador do próprio Codespace: `npm run dev:mobile:web` e abra a porta **8081**. A porta 3333 também precisa estar pública.
+
+> O túnel é mais lento que a rede local e depende do ngrok. Se aparecer `ngrok tunnel took too long to connect`, pare o Expo (Ctrl+C) e rode de novo.
 
 > Com a porta 3333 pública, qualquer pessoa com a URL alcança a API do Codespace. Volte a visibilidade para **Private** depois da apresentação.
 
