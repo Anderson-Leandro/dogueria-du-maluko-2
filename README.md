@@ -219,6 +219,15 @@ EXPO_PUBLIC_API_URL=http://SEU_IP:3333/api
 
 A URL em uso aparece no rodapé da aba **Conta**, o que ajuda a diagnosticar problemas de conexão.
 
+**QR code ilegível no terminal?** Alguns terminais deixam espaço entre as linhas (no VS Code, a configuração `terminal.integrated.lineHeight` maior que 1) e o QR desenhado pelo Expo fica distorcido. Alternativas:
+
+```bash
+npm run mobile:qr                              # gera o QR como imagem (PNG) e abre na tela
+npm run mobile:qr -- exp://xxxx.exp.direct     # com túnel/Codespaces: passe a URL exibida pelo Expo
+```
+
+Também dá para digitar a URL no Expo Go, em **"Enter URL manually"** (ex.: `exp://192.168.0.10:8081`).
+
 ### ☁️ Rodando no GitHub Codespaces
 
 O repositório inclui um **devcontainer** (`.devcontainer/`) que prepara tudo automaticamente:
@@ -262,6 +271,7 @@ No web, o navegador fala só com a porta 5173 e o Vite repassa `/api` internamen
 | `npm run dev:mobile` | App mobile (Expo; QR code para o Expo Go) |
 | `npm run dev:mobile:tunnel` | App mobile via túnel (Codespaces ou redes diferentes) |
 | `npm run dev:mobile:web` | App mobile no navegador (porta 8081) |
+| `npm run mobile:qr` | Gera o QR code do Expo como imagem (quando o do terminal não é lido) |
 | `npm run build` | Build de produção do web |
 | `npm run typecheck` | Verificação de tipos do web, do backend e do mobile |
 

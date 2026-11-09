@@ -14,6 +14,7 @@
     "build": "npm --prefix apps/web run build",
     "typecheck": "npm --prefix apps/web run typecheck && npm --prefix backend run typecheck && npm --prefix apps/mobile run typecheck",
     "dev:mobile:tunnel": "npm --prefix apps/mobile run start -- --tunnel",
-    "dev:mobile:web": "npm --prefix apps/mobile run web"
+    "dev:mobile:web": "npm --prefix apps/mobile run web",
+    "mobile:qr": "npm --prefix apps/mobile run qr --"
   }
 }

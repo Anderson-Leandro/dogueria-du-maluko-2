@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "@types/react": "~19.3.0",
+    "qrcode": "^1.5.4",
     "typescript": "~6.0.3"
   },
   "scripts": {
@@ -32,7 +33,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "typecheck": "tsc --noEmit -p tsconfig.typecheck.json"
+    "typecheck": "tsc --noEmit -p tsconfig.typecheck.json",
+    "qr": "node scripts/qr.mjs"
   },
   "private": true,
   "license": "MIT",
