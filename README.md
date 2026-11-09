@@ -253,6 +253,7 @@ No web, o navegador fala só com a porta 5173 e o Vite repassa `/api` internamen
    npm run dev:mobile:tunnel
    ```
    O túnel usa o **ngrok** (`@expo/ngrok`), que o `setup.sh` instala globalmente ao criar o Codespace. Em um Codespace criado antes dessa mudança, instale uma vez: `npm i -g @expo/ngrok`.
+   - O script usa `--tunnel ngrok`, que **não exige conta Expo**. No Expo SDK 58, um `--tunnel` sem provedor usa o túnel da Expo, que exige `npx expo login` e falha com `Couldn't create a signed tunnel URL` se você não estiver logado.
 3. **Abrir no Expo Go.** Escaneie o QR code. Se ele não for lido, gere a imagem com `npm run mobile:qr -- <URL exp://… exibida pelo Expo>`, ou digite a URL em **"Enter URL manually"**.
    - **iPhone:** o Expo Go só abre o projeto se o terminal e o app estiverem logados na **mesma conta Expo**. Rode `npx expo login` no terminal do Codespace e entre na mesma conta no Expo Go.
 4. **Navegador.** Para mostrar o app no navegador do próprio Codespace: `npm run dev:mobile:web` e abra a porta **8081**. A porta 3333 também precisa estar pública.
