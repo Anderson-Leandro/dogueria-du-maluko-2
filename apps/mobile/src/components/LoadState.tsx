@@ -44,7 +44,7 @@ export function EmptyState({ icon, title, subtitle, action }: { icon: React.Reac
   return (
     <View style={styles.center}>
       {icon}
-      <Text style={styles.emptyTitle}>{title}</Text>
+      <Text textBreakStrategy="simple" style={styles.emptyTitle}>{title}</Text>
       {subtitle ? <Text style={styles.message}>{subtitle}</Text> : null}
       {action}
     </View>
@@ -56,6 +56,6 @@ const styles = StyleSheet.create({
   skeleton: { backgroundColor: colors.muted, borderRadius: radius.lg },
   center: { alignItems: "center", justifyContent: "center", gap: spacing.lg, paddingVertical: 48, paddingHorizontal: spacing.xl },
   emoji: { fontSize: 44 },
-  message: { color: colors.mutedForeground, fontFamily: fonts.semibold, fontSize: 14, textAlign: "center" },
-  emptyTitle: { color: colors.foreground, fontFamily: fonts.display, fontSize: 26, letterSpacing: 1.5, textAlign: "center" },
+  message: { alignSelf: "stretch", color: colors.mutedForeground, fontFamily: fonts.semibold, fontSize: 14, textAlign: "center" },
+  emptyTitle: { alignSelf: "stretch", color: colors.foreground, fontFamily: fonts.display, fontSize: 26, letterSpacing: 1.5, textAlign: "center" },
 });

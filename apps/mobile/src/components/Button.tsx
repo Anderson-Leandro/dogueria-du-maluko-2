@@ -36,7 +36,11 @@ export function Button({ label, onPress, variant = "primary", size = "md", loadi
       ]}
     >
       {loading ? <ActivityIndicator color={variant === "outline" ? colors.primary : colors.white} /> : icon}
-      <Text style={[styles.label, size === "lg" && styles.labelLg, variant === "outline" && { color: colors.primary }]}>
+      <Text
+        numberOfLines={1}
+        textBreakStrategy="simple"
+        style={[styles.label, size === "lg" && styles.labelLg, variant === "outline" && { color: colors.primary }]}
+      >
         {label}
       </Text>
     </Pressable>
@@ -56,6 +60,6 @@ const styles = StyleSheet.create({
   lg: { paddingVertical: 14 },
   outline: { borderWidth: 2, borderColor: colors.primary, backgroundColor: "transparent" },
   disabled: { opacity: 0.45 },
-  label: { color: colors.white, fontFamily: fonts.display, fontSize: 18, letterSpacing: 1.5 },
+  label: { color: colors.white, fontFamily: fonts.display, fontSize: 18, letterSpacing: 1.5, flexShrink: 1 },
   labelLg: { fontSize: 22 },
 });

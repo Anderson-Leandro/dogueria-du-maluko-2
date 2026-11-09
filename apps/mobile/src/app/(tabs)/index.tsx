@@ -30,10 +30,10 @@ export default function HomeScreen() {
   return (
     <ScrollView contentContainerStyle={styles.content}>
       <View style={styles.hero}>
-        <Text style={styles.kicker}>🔥 SEU HOT DOG MAIS DIVERTIDO</Text>
-        <Text style={[styles.heroLine, { color: colors.accent }]}>A DOGUERIA</Text>
-        <Text style={[styles.heroLine, { color: colors.white }]}>MAIS MALUCA</Text>
-        <Text style={[styles.heroSub, { color: colors.accent }]}>DE RIBEIRÃO PIRES!</Text>
+        <Text textBreakStrategy="simple" style={styles.kicker}>🔥 SEU HOT DOG MAIS DIVERTIDO</Text>
+        <Text textBreakStrategy="simple" style={[styles.heroLine, { color: colors.accent }]}>A DOGUERIA</Text>
+        <Text textBreakStrategy="simple" style={[styles.heroLine, { color: colors.white }]}>MAIS MALUCA</Text>
+        <Text textBreakStrategy="simple" style={[styles.heroSub, { color: colors.accent }]}>DE RIBEIRÃO PIRES!</Text>
         <Button label="PEÇA JÁ SEU DOGUE!" size="lg" onPress={() => router.navigate("/cardapio")} style={{ marginTop: spacing.xl }} />
         <View style={styles.freeShipping}>
           <Text style={styles.freeShippingText}>🚚 Entrega grátis acima de {formatPrice(freeDeliveryMin)}</Text>
@@ -42,7 +42,7 @@ export default function HomeScreen() {
 
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>MAIS PEDIDOS</Text>
+          <Text textBreakStrategy="simple" style={styles.sectionTitle}>MAIS PEDIDOS</Text>
           <Text style={styles.link} onPress={() => router.navigate("/cardapio")} accessibilityRole="link">
             Ver todos <ChevronRight size={14} color={colors.primary} />
           </Text>
@@ -64,7 +64,7 @@ export default function HomeScreen() {
         {PERKS.map((perk) => (
           <View key={perk.title} style={styles.perk}>
             <Text style={styles.perkIcon}>{perk.icon}</Text>
-            <Text style={styles.perkTitle}>{perk.title}</Text>
+            <Text textBreakStrategy="simple" style={styles.perkTitle}>{perk.title}</Text>
             <Text style={styles.perkSub}>{perk.sub}</Text>
           </View>
         ))}
@@ -76,9 +76,12 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   content: { paddingBottom: spacing.xxl },
   hero: { backgroundColor: colors.secondary, paddingVertical: 40, paddingHorizontal: spacing.xl, alignItems: "center" },
-  kicker: { color: "rgba(255,255,255,0.8)", fontFamily: fonts.extrabold, fontSize: 12, letterSpacing: 2, marginBottom: spacing.md },
-  heroLine: { fontFamily: fonts.display, fontSize: 44, letterSpacing: 2, lineHeight: 48, textAlign: "center" },
-  heroSub: { fontFamily: fonts.display, fontSize: 30, letterSpacing: 2, textAlign: "center" },
+  // Títulos centralizados usam a largura toda do container (alignSelf: "stretch"):
+  // no Android a largura medida para textos com fonte customizada + letterSpacing sai
+  // um pouco menor que a real, e o texto quebrava no espaço com a 2ª linha escondida.
+  kicker: { alignSelf: "stretch", textAlign: "center", color: "rgba(255,255,255,0.8)", fontFamily: fonts.extrabold, fontSize: 12, letterSpacing: 2, marginBottom: spacing.md },
+  heroLine: { alignSelf: "stretch", fontFamily: fonts.display, fontSize: 44, letterSpacing: 2, lineHeight: 48, textAlign: "center" },
+  heroSub: { alignSelf: "stretch", fontFamily: fonts.display, fontSize: 30, letterSpacing: 2, textAlign: "center" },
   freeShipping: {
     marginTop: spacing.md,
     backgroundColor: "rgba(34,197,94,0.2)",
@@ -91,12 +94,12 @@ const styles = StyleSheet.create({
   freeShippingText: { color: "#86efac", fontFamily: fonts.bold, fontSize: 13 },
   section: { paddingHorizontal: spacing.lg, paddingTop: spacing.xl },
   sectionHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: spacing.lg },
-  sectionTitle: { color: colors.foreground, fontFamily: fonts.display, fontSize: 30, letterSpacing: 1.5 },
+  sectionTitle: { flex: 1, color: colors.foreground, fontFamily: fonts.display, fontSize: 30, letterSpacing: 1.5 },
   link: { color: colors.primary, fontFamily: fonts.bold, fontSize: 13 },
   list: { gap: spacing.lg },
   perks: { flexDirection: "row", flexWrap: "wrap", gap: spacing.md, padding: spacing.lg, paddingTop: spacing.xl },
   perk: { flexBasis: "47%", flexGrow: 1, backgroundColor: colors.dark, borderRadius: radius.lg, padding: spacing.lg, alignItems: "center", gap: 4 },
   perkIcon: { fontSize: 26 },
-  perkTitle: { color: colors.accent, fontFamily: fonts.display, fontSize: 16, letterSpacing: 1, textAlign: "center" },
+  perkTitle: { alignSelf: "stretch", color: colors.accent, fontFamily: fonts.display, fontSize: 16, letterSpacing: 1, textAlign: "center" },
   perkSub: { color: colors.whiteMuted, fontFamily: fonts.regular, fontSize: 12, textAlign: "center" },
 });

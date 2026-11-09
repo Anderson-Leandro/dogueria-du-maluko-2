@@ -30,8 +30,8 @@ export default function MenuScreen() {
       <View style={styles.tabs} accessibilityRole="tablist">
         {(
           [
-            { id: "dogues", label: "🌭  DOGUES", count: products.length },
-            { id: "bebidas", label: "🥤  BEBIDAS", count: sections.reduce((n, s) => n + s.data.length, 0) },
+            { id: "dogues", emoji: "🌭", label: "DOGUES", count: products.length },
+            { id: "bebidas", emoji: "🥤", label: "BEBIDAS", count: sections.reduce((n, s) => n + s.data.length, 0) },
           ] as const
         ).map((t) => {
           const active = tab === t.id;
@@ -43,7 +43,11 @@ export default function MenuScreen() {
               accessibilityState={{ selected: active }}
               style={[styles.tab, active && styles.tabActive]}
             >
-              <Text style={[styles.tabLabel, active && styles.tabLabelActive]}>{t.label}</Text>
+              {/* Emoji e rótulo separados: sem espaço no texto, o Android não tem onde quebrar a linha */}
+              <Text style={styles.tabEmoji}>{t.emoji}</Text>
+              <Text numberOfLines={1} textBreakStrategy="simple" style={[styles.tabLabel, active && styles.tabLabelActive]}>
+                {t.label}
+              </Text>
               <View style={[styles.count, active && styles.countActive]}>
                 <Text style={[styles.countText, active && { color: colors.white }]}>{t.count}</Text>
               </View>
@@ -89,8 +93,11 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
   tabs: { flexDirection: "row", gap: 4, backgroundColor: colors.dark, paddingHorizontal: spacing.lg, paddingTop: spacing.sm },
   tab: {
+    // Cada aba ocupa metade da largura: o tamanho não depende da medição do texto
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     gap: spacing.sm,
     paddingHorizontal: spacing.lg,
     paddingVertical: 10,
@@ -98,7 +105,8 @@ const styles = StyleSheet.create({
     borderTopRightRadius: radius.md,
   },
   tabActive: { backgroundColor: colors.background },
-  tabLabel: { color: "rgba(255,255,255,0.5)", fontFamily: fonts.display, fontSize: 18, letterSpacing: 1.5 },
+  tabEmoji: { fontSize: 16 },
+  tabLabel: { color: "rgba(255,255,255,0.5)", fontFamily: fonts.display, fontSize: 18, letterSpacing: 1.5, flexShrink: 1 },
   tabLabelActive: { color: colors.foreground },
   count: { backgroundColor: "rgba(255,255,255,0.1)", borderRadius: radius.full, paddingHorizontal: 8, paddingVertical: 1 },
   countActive: { backgroundColor: colors.primary },
