@@ -9,12 +9,14 @@ import { PasswordToggle } from "@/components/PasswordToggle";
 import { useToast } from "@/components/Toast";
 import { useSingleFlight } from "@/hooks";
 import { leaveAuthFlow, safeRedirect } from "@/lib/navigation";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, fonts, spacing } from "@/theme";
 
 export default function LoginScreen() {
   const { login, isAuthenticated } = useAuth();
   const toast = useToast();
   const params = useLocalSearchParams<{ redirect?: string }>();
+  const insets = useSafeAreaInsets();
   const redirect = safeRedirect(params.redirect);
 
   const [email, setEmail] = useState("");
@@ -51,7 +53,7 @@ export default function LoginScreen() {
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
-      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+      <ScrollView contentContainerStyle={[styles.content, { paddingBottom: spacing.xl + insets.bottom }]} keyboardShouldPersistTaps="handled">
         <Text style={styles.title}>ENTRAR</Text>
         <Text style={styles.subtitle}>Acesse sua conta para pedir seus dogues favoritos</Text>
 

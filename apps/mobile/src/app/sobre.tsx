@@ -4,17 +4,19 @@ import { router } from "expo-router";
 import { useAbout } from "@dogueria/core";
 import { Button } from "@/components/Button";
 import { ErrorState, SkeletonList } from "@/components/LoadState";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, fonts, radius, spacing } from "@/theme";
 
 /** Sobre: estatísticas, linha do tempo, equipe e valores (dados da API /about) */
 export default function AboutScreen() {
   const { aboutData, loading, error, refreshAboutData } = useAbout();
+  const insets = useSafeAreaInsets();
 
   if (error) return <ErrorState message={error} onRetry={refreshAboutData} dark />;
   if (loading || !aboutData) return <SkeletonList count={3} height={140} />;
 
   return (
-    <ScrollView contentContainerStyle={styles.content}>
+    <ScrollView contentContainerStyle={[styles.content, { paddingBottom: spacing.xl + insets.bottom }]}>
       <Text style={styles.kicker}>🐕 RIBEIRÃO PIRES, SP</Text>
       <Text style={styles.lead}>
         De um carrinho vermelho na feira ao delivery mais pedido de Ribeirão Pires. Essa é a história da dogueria mais maluca da cidade.

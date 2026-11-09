@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Stack, router, useLocalSearchParams } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { formatPrice, productService, useApiResource, useCart } from "@dogueria/core";
 import { Button } from "@/components/Button";
 import { ErrorState, SkeletonList } from "@/components/LoadState";
@@ -17,6 +18,8 @@ export default function ProductScreen() {
   const { addToCart } = useCart();
   const toast = useToast();
   const [qty, setQty] = useState(1);
+  // Android edge-to-edge: a tela vai até a borda, por trás da barra de navegação do sistema
+  const insets = useSafeAreaInsets();
 
   if (error) return <ErrorState message={error} onRetry={refresh} />;
   if (loading) return <SkeletonList count={1} height={320} />;
@@ -57,7 +60,7 @@ export default function ProductScreen() {
           </View>
         </View>
       </ScrollView>
-      <View style={styles.footer}>
+      <View style={[styles.footer, { paddingBottom: spacing.lg + insets.bottom }]}>
         <QtyStepper value={qty} onChange={setQty} min={1} dark label={product.name} />
         <Button label={`ADICIONAR · ${formatPrice(product.price * qty)}`} onPress={handleAdd} style={{ flex: 1 }} testID="adicionar-produto" />
       </View>

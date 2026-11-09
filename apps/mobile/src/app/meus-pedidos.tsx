@@ -6,10 +6,12 @@ import { useAuth, useMyOrders } from "@dogueria/core";
 import { Button } from "@/components/Button";
 import { EmptyState, ErrorState, SkeletonList } from "@/components/LoadState";
 import { OrderCard } from "@/components/OrderCard";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, spacing } from "@/theme";
 
 function OrdersList() {
   const { orders, loading, error, refreshOrders } = useMyOrders();
+  const insets = useSafeAreaInsets();
 
   if (error) return <ErrorState message={error} onRetry={refreshOrders} />;
   if (loading && orders.length === 0) return <SkeletonList count={3} height={180} />;
@@ -18,7 +20,7 @@ function OrdersList() {
     <FlatList
       data={orders}
       keyExtractor={(o) => String(o.id)}
-      contentContainerStyle={orders.length === 0 ? { flexGrow: 1 } : styles.list}
+      contentContainerStyle={[orders.length === 0 ? { flexGrow: 1 } : styles.list, { paddingBottom: spacing.xxl + insets.bottom }]}
       ItemSeparatorComponent={() => <View style={{ height: spacing.lg }} />}
       renderItem={({ item }) => <OrderCard order={item} />}
       refreshControl={<RefreshControl refreshing={loading} onRefresh={refreshOrders} tintColor={colors.primary} />}

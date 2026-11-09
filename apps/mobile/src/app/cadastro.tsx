@@ -9,6 +9,7 @@ import { PasswordToggle } from "@/components/PasswordToggle";
 import { useToast } from "@/components/Toast";
 import { useSingleFlight } from "@/hooks";
 import { leaveAuthFlow, safeRedirect } from "@/lib/navigation";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, fonts, spacing } from "@/theme";
 
 const REGISTER_FIELDS = ["name", "email", "password", "confirmPassword", "zipCode", "street", "number"] as const;
@@ -18,6 +19,7 @@ export default function RegisterScreen() {
   const { register, isAuthenticated } = useAuth();
   const toast = useToast();
   const params = useLocalSearchParams<{ redirect?: string }>();
+  const insets = useSafeAreaInsets();
   const redirect = safeRedirect(params.redirect);
 
   const [form, setForm] = useState<RegisterData>({
@@ -66,7 +68,7 @@ export default function RegisterScreen() {
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
-      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+      <ScrollView contentContainerStyle={[styles.content, { paddingBottom: spacing.xl + insets.bottom }]} keyboardShouldPersistTaps="handled">
         <Text style={styles.title}>CRIAR CONTA</Text>
         <Text style={styles.subtitle}>Cadastre-se e peça seu dogue em segundos</Text>
 
