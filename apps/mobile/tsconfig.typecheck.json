@@ -1,0 +1,15 @@
+{
+  // Só para o `tsc` (npm run typecheck). NÃO usar no tsconfig.json: o Metro lê os
+  // "paths" de lá e passaria a resolver "react" para os tipos em tempo de execução.
+  // Os arquivos de packages/core não têm node_modules: os tipos do React vêm deste app.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"],
+      "@dogueria/core": ["../../packages/core/src/index.ts"],
+      "@dogueria/core/*": ["../../packages/core/src/*"],
+      "react": ["./node_modules/@types/react"],
+      "react/*": ["./node_modules/@types/react/*"]
+    }
+  }
+}
