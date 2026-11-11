@@ -35,7 +35,21 @@ if (!parsed.success) {
   process.exit(1);
 }
 
+/**
+ * No GitHub Codespaces o front web (5173) e o app mobile no navegador (8081)
+ * são abertos por URLs próprias do Codespace: libera essas origens automaticamente.
+ */
+function codespacesOrigins(): string[] {
+  const name = process.env.CODESPACE_NAME;
+  const domain = process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN;
+  if (!name || !domain) return [];
+  return [5173, 8081].map((port) => `https://${name}-${port}.${domain}`);
+}
+
 export const env = {
   ...parsed.data,
-  corsOrigins: parsed.data.CORS_ORIGIN.split(",").map((o) => o.trim()).filter(Boolean),
+  corsOrigins: [
+    ...parsed.data.CORS_ORIGIN.split(",").map((o) => o.trim()).filter(Boolean),
+    ...codespacesOrigins(),
+  ],
 };
